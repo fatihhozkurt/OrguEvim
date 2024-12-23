@@ -29,8 +29,6 @@ public class PostEntity extends BaseEntity {
     @Column(name = "youtube_video_link", length = 100)
     private String link;
 
-    //TODO: Relations
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private UserEntity user;

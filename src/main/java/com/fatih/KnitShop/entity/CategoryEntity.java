@@ -19,8 +19,6 @@ public class CategoryEntity extends BaseEntity {
     @Column(name = "category_name", unique = true, nullable = false, length = 20)
     private String categoryName;
 
-    //TODO: Relations
-
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostEntity> posts;
 }

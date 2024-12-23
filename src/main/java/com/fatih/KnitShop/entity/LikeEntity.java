@@ -16,8 +16,6 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "likes")
 public class LikeEntity extends BaseEntity {
 
-    //TODO: Relations
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private UserEntity user;
