@@ -23,8 +23,6 @@ public class CommentEntity extends BaseEntity {
     @Column(name = "content", length = 2200, nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    //TODO: Relations
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private UserEntity user;

@@ -19,8 +19,6 @@ public class ImageEntity extends BaseEntity {
     @Column(name = "image_path", nullable = false, length = 500)
     private String imagePath;
 
-    //TODO: Relations
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
     private PostEntity post;
