@@ -1,6 +1,6 @@
 package com.fatih.KnitShop.url;
 
-public abstract class UrlConst {
+public final class UrlConst {
 
     //URL CONSTANTS FOR CONTROLLERS
     public final static String USER = "/user";
