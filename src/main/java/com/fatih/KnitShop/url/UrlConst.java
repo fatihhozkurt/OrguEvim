@@ -9,4 +9,11 @@ public final class UrlConst {
     public final static String IMAGE = "/image";
     public final static String COMMENT = "/comment";
     public final static String CATEGORY = "/category";
+
+    //URL CONSTANTS FOR METHODS
+    public final static String ALL = "/all";
+    public final static String ID = "/id";
+    public final static String RANDOM = "/random";
+    public final static String REPLY = "/reply";
+    public final static String FOLLOW = "/follow";
 }
