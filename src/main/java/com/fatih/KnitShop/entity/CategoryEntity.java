@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
@@ -17,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "categories")
+@SQLRestriction("record_status <> '1'")
 public class CategoryEntity extends BaseEntity {
 
     @Column(name = "category_name", updatable = false, unique = true, nullable = false, length = 20)

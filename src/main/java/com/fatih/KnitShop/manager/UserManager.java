@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -67,6 +68,13 @@ public class UserManager implements UserService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Override
+    public List<UserEntity> getAllUsers() {
+
+        return userRepository.findAll();
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void validateFollow(UserEntity follower, UserEntity following) {
         if (following.getFollowers().contains(follower)) {
             throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U002",
@@ -75,6 +83,7 @@ public class UserManager implements UserService {
         }
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void validateUnfollow(UserEntity follower, UserEntity following) {
         if (!(following.getFollowers().contains(follower))) {
             throw new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.U003",
