@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @Table(name = "comments")
+@SQLRestriction("record_status <> '1'")
 public class CommentEntity extends BaseEntity {
 
     @Column(name = "content", length = 2200, nullable = false, columnDefinition = "TEXT")

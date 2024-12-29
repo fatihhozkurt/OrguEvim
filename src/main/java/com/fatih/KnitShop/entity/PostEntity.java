@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.engine.spi.CascadeStyle;
 
 import javax.xml.stream.events.Comment;
@@ -21,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "posts")
+@SQLRestriction("record_status <> '1'")
 public class PostEntity extends BaseEntity {
 
     @Column(name = "title", nullable = false, length = 100)

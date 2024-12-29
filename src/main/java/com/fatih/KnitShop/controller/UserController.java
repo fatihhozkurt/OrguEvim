@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,5 +38,12 @@ public class UserController implements UserControllerApi {
     public ResponseEntity<HttpStatus> unfollowUser(UserUnfollowRequest userUnfollowRequest) {
         userService.unfollow(userUnfollowRequest);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<List<UserProfileResponse>> getAllUsers() {
+        List<UserEntity> users = userService.getAllUsers();
+        List<UserProfileResponse> userProfileResponses = UserMapper.INSTANCE.toUserProfileResponseList(users);
+        return new ResponseEntity<>(userProfileResponses, HttpStatus.OK);
     }
 }

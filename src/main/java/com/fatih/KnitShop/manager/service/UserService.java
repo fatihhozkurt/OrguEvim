@@ -4,6 +4,7 @@ import com.fatih.KnitShop.dto.request.user.UserFollowRequest;
 import com.fatih.KnitShop.dto.request.user.UserUnfollowRequest;
 import com.fatih.KnitShop.entity.UserEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
@@ -12,4 +13,6 @@ public interface UserService {
     void follow(UserFollowRequest userFollowRequest);
 
     void unfollow(UserUnfollowRequest userUnfollowRequest);
+
+    List<UserEntity> getAllUsers();
 }

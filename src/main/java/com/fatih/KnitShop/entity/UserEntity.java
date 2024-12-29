@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "users")
+@SQLRestriction("record_status <> '1'")
 public class UserEntity extends BaseEntity {
 
     @Column(name = "name", nullable = false, length = 43)

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CsrfController implements CsrfControllerApi {
+
     @Override
     public CsrfToken csrf(HttpServletRequest request) {
         return (CsrfToken) request.getAttribute(CsrfToken.class.getName());
