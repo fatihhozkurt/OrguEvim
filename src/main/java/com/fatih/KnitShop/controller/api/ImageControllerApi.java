@@ -1,4 +1,4 @@
-package com.fatih.KnitShop.api;
+package com.fatih.KnitShop.controller.api;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 

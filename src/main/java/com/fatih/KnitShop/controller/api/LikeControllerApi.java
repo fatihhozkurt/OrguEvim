@@ -1,4 +1,4 @@
-package com.fatih.KnitShop.api;
+package com.fatih.KnitShop.controller.api;
 
 import com.fatih.KnitShop.dto.request.like.*;
 import com.fatih.KnitShop.dto.response.like.LikeResponse;
