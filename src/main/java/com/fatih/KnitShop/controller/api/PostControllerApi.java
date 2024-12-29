@@ -1,4 +1,4 @@
-package com.fatih.KnitShop.api;
+package com.fatih.KnitShop.controller.api;
 
 import com.fatih.KnitShop.dto.request.post.CreatePostRequest;
 import com.fatih.KnitShop.dto.request.post.DeletePostRequest;

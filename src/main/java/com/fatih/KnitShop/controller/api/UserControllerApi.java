@@ -1,11 +1,14 @@
-package com.fatih.KnitShop.api;
+package com.fatih.KnitShop.controller.api;
 
 import com.fatih.KnitShop.dto.request.user.UserFollowRequest;
+import com.fatih.KnitShop.dto.request.user.UserUnfollowRequest;
 import com.fatih.KnitShop.dto.response.user.UserProfileResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -20,4 +23,7 @@ public interface UserControllerApi {
 
     @PostMapping(FOLLOW)
     ResponseEntity<HttpStatus> followUser(@Valid @RequestBody UserFollowRequest userFollowRequest);
+
+    @DeleteMapping(UNFOLLOW)
+    ResponseEntity<HttpStatus> unfollowUser(@Valid @RequestBody UserUnfollowRequest userUnfollowRequest);
 }

@@ -1,4 +1,4 @@
-package com.fatih.KnitShop.api;
+package com.fatih.KnitShop.controller.api;
 
 import com.fatih.KnitShop.dto.response.category.CategoryResponse;
 import org.springframework.http.ResponseEntity;
@@ -15,5 +15,4 @@ public interface CategoryControllerApi {
 
     @GetMapping(ALL)
     ResponseEntity<List<CategoryResponse>> getAllCategories();
-
 }

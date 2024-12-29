@@ -1,6 +1,6 @@
 package com.fatih.KnitShop.controller;
 
-import com.fatih.KnitShop.api.LikeControllerApi;
+import com.fatih.KnitShop.controller.api.LikeControllerApi;
 import com.fatih.KnitShop.dto.request.like.*;
 import com.fatih.KnitShop.dto.response.like.LikeResponse;
 import com.fatih.KnitShop.dto.response.like.UnlikeResponse;

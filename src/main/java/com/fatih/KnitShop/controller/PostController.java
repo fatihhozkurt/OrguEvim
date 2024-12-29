@@ -1,6 +1,6 @@
 package com.fatih.KnitShop.controller;
 
-import com.fatih.KnitShop.api.PostControllerApi;
+import com.fatih.KnitShop.controller.api.PostControllerApi;
 import com.fatih.KnitShop.dto.request.post.CreatePostRequest;
 import com.fatih.KnitShop.dto.request.post.DeletePostRequest;
 import com.fatih.KnitShop.dto.request.post.UpdatePostRequest;
@@ -8,19 +8,22 @@ import com.fatih.KnitShop.dto.response.post.PostCardResponse;
 import com.fatih.KnitShop.dto.response.post.PostDetailResponse;
 import com.fatih.KnitShop.dto.response.post.PostSliderResponse;
 import com.fatih.KnitShop.dto.response.post.UserProfilePostCardResponse;
+import com.fatih.KnitShop.manager.service.PostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-import static com.fatih.KnitShop.url.UrlConst.POST;
-
 @RestController
+@RequiredArgsConstructor
 public class PostController implements PostControllerApi {
+
+    private final PostService postService;
+
     @Override
     public ResponseEntity<PageImpl<PostSliderResponse>> getRandomPosts(Pageable pageable) {
         return null;

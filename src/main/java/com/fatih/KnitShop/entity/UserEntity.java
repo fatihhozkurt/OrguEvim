@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -55,7 +54,8 @@ public class UserEntity extends BaseEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_follow",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id"))
+            inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "follower_id"}))
     @JsonManagedReference
     private List<UserEntity> followers;
 

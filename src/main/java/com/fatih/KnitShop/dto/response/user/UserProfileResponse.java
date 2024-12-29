@@ -10,7 +10,7 @@ public record UserProfileResponse(
         UUID userId,
         String name,
         String surname,
-        String userName,
+        String username,
         Long followersCount,
         Long followingCount,
         String biography,
