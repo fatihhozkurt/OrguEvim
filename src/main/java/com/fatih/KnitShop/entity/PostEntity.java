@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "posts")
-@SQLRestriction("record_status <> '1'")
+@SQLRestriction("record_status <> 'true'")
 public class PostEntity extends BaseEntity {
 
     @Column(name = "title", nullable = false, length = 100)
@@ -40,6 +40,9 @@ public class PostEntity extends BaseEntity {
     @PositiveOrZero
     @Column(name = "like_count", nullable = false)
     private Long likeCount;
+
+    @Column(name = "image_count", nullable = false)
+    private Long imageCount;
 
     @PositiveOrZero
     @Column(name = "comment_count", nullable = false)

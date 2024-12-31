@@ -16,7 +16,7 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "likes")
-@SQLRestriction("record_status <> '1'")
+@SQLRestriction("record_status <> 'true'")
 public class LikeEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

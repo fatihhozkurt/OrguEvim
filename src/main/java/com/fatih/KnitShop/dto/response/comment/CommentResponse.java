@@ -1,6 +1,6 @@
 package com.fatih.KnitShop.dto.response.comment;
 
-import com.fatih.KnitShop.dto.response.user.UserMiniProfile;
+import com.fatih.KnitShop.dto.response.user.UserMiniProfileResponse;
 
 import java.util.UUID;
 
@@ -12,7 +12,7 @@ public record CommentResponse(
         String commentContent,
 
         //User fields
-        UserMiniProfile userMiniProfile,
+        UserMiniProfileResponse userMiniProfileResponse,
 
         //Like fields
         Long likeCount

@@ -1,6 +1,5 @@
 package com.fatih.KnitShop.manager;
 
-import com.fatih.KnitShop.dto.request.category.CategoryCreateRequest;
 import com.fatih.KnitShop.entity.CategoryEntity;
 import com.fatih.KnitShop.exception.DataAlreadyExistException;
 import com.fatih.KnitShop.exception.ResourceNotFoundException;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import static com.fatih.KnitShop.url.RecordStatus.ACTIVE;
 import static com.fatih.KnitShop.url.RecordStatus.PASSIVE;
 
 @Service
@@ -28,18 +26,13 @@ public class CategoryManager implements CategoryService {
 
     @Transactional
     @Override
-    public void createCategory(String categoryName) {
-        categoryRepository.findByCategoryName(categoryName).ifPresent(entity -> {
-            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.C002",
-                    new Object[]{categoryName},
-                    Locale.getDefault()));
-        });
+    public CategoryEntity createCategory(CategoryEntity category) {
 
-        CategoryEntity categoryEntity = new CategoryEntity();
-        categoryEntity.setCategoryName(categoryName);
-        categoryEntity.setRecordStatus(ACTIVE);
+        checkCategoryName(category.getCategoryName());
 
-        categoryRepository.save(categoryEntity);
+        return categoryRepository.save(CategoryEntity.builder()
+                .categoryName(category.getCategoryName().toLowerCase(Locale.ROOT))
+                .build());
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -61,11 +54,33 @@ public class CategoryManager implements CategoryService {
     @Transactional
     @Override
     public void deleteCategory(UUID categoryId) {
+
         CategoryEntity category = getCategoryById(categoryId);
         category.setRecordStatus(PASSIVE);
-        category.getPosts().clear();
-        category.setPostCount(0L);
 
         categoryRepository.save(category);
+    }
+
+    @Transactional
+    @Override
+    public CategoryEntity updateCategory(CategoryEntity category) {
+
+        CategoryEntity foundCategory = getCategoryById(category.getId());
+
+        if (category.getCategoryName() != null) {
+            checkCategoryName(category.getCategoryName());
+            foundCategory.setCategoryName(category.getCategoryName());
+        }
+
+        return categoryRepository.save(foundCategory);
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public void checkCategoryName(String categoryName) {
+        if (categoryRepository.findByCategoryName(categoryName.toLowerCase(Locale.ROOT)).isPresent()) {
+            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.C002",
+                    new Object[]{categoryName},
+                    Locale.getDefault()));
+        }
     }
 }

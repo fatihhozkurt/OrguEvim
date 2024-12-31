@@ -4,7 +4,7 @@ import com.fatih.KnitShop.controller.api.LikeControllerApi;
 import com.fatih.KnitShop.dto.request.like.*;
 import com.fatih.KnitShop.dto.response.like.LikeResponse;
 import com.fatih.KnitShop.dto.response.like.UnlikeResponse;
-import com.fatih.KnitShop.dto.response.user.UserMiniProfile;
+import com.fatih.KnitShop.dto.response.user.UserMiniProfileResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,17 +43,17 @@ public class LikeController implements LikeControllerApi {
     }
 
     @Override
-    public ResponseEntity<UserMiniProfile> getLikesByPostId(UUID ownerId, UUID postId) {
+    public ResponseEntity<UserMiniProfileResponse> getLikesByPostId(UUID ownerId, UUID postId) {
         return null;
     }
 
     @Override
-    public ResponseEntity<UserMiniProfile> getLikesByCommentId(UUID ownerId, UUID postId, UUID commentId) {
+    public ResponseEntity<UserMiniProfileResponse> getLikesByCommentId(UUID ownerId, UUID postId, UUID commentId) {
         return null;
     }
 
     @Override
-    public ResponseEntity<UserMiniProfile> getLikesByReplyId(UUID ownerId, UUID postId, UUID commentId, UUID replyId) {
+    public ResponseEntity<UserMiniProfileResponse> getLikesByReplyId(UUID ownerId, UUID postId, UUID commentId, UUID replyId) {
         return null;
     }
 }

@@ -4,7 +4,7 @@ import com.fatih.KnitShop.dto.response.image.ImageResponse;
 
 import java.util.UUID;
 
-public record UserMiniProfile(
+public record UserMiniProfileResponse(
 
         UUID ownerId,
         String name,

@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @Table(name = "comments")
-@SQLRestriction("record_status <> '1'")
+@SQLRestriction("record_status <> 'true'")
 public class CommentEntity extends BaseEntity {
 
     @Column(name = "content", length = 2200, nullable = false, columnDefinition = "TEXT")

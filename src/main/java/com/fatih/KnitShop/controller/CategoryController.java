@@ -1,7 +1,8 @@
 package com.fatih.KnitShop.controller;
 
 import com.fatih.KnitShop.controller.api.CategoryControllerApi;
-import com.fatih.KnitShop.dto.request.category.CategoryCreateRequest;
+import com.fatih.KnitShop.dto.request.category.CreateCategoryRequest;
+import com.fatih.KnitShop.dto.request.category.UpdateCategoryRequest;
 import com.fatih.KnitShop.dto.response.category.CategoryResponse;
 import com.fatih.KnitShop.entity.CategoryEntity;
 import com.fatih.KnitShop.manager.service.CategoryService;
@@ -28,10 +29,11 @@ public class CategoryController implements CategoryControllerApi {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> createCategory(CategoryCreateRequest categoryCreateRequest) {
-        CategoryEntity category = CategoryMapper.INSTANCE.toEntity(categoryCreateRequest);
-        categoryService.createCategory(category.getCategoryName());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<CategoryResponse> createCategory(CreateCategoryRequest createCategoryRequest) {
+        CategoryEntity category = CategoryMapper.INSTANCE.createCategoryRequestToEntity(createCategoryRequest);
+        CategoryEntity savedCategory = categoryService.createCategory(category);
+        CategoryResponse categoryResponse = CategoryMapper.INSTANCE.toCategoryResponse(savedCategory);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.CREATED);
     }
 
     @Override
@@ -45,5 +47,15 @@ public class CategoryController implements CategoryControllerApi {
     public ResponseEntity<HttpStatus> deleteCategoryById(UUID categoryId) {
         categoryService.deleteCategory(categoryId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<CategoryResponse> updateCategory(UpdateCategoryRequest updateCategoryRequest) {
+
+        CategoryEntity category = CategoryMapper.INSTANCE.updateCategoryRequestToEntity(updateCategoryRequest);
+        CategoryEntity updatedCategory = categoryService.updateCategory(category);
+        CategoryResponse categoryResponse = CategoryMapper.INSTANCE.toCategoryResponse(updatedCategory);
+
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 }

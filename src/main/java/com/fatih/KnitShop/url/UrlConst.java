@@ -1,5 +1,7 @@
 package com.fatih.KnitShop.url;
 
+import org.springframework.stereotype.Component;
+
 public final class UrlConst {
 
     //URL CONSTANTS FOR CONTROLLERS
@@ -18,4 +20,7 @@ public final class UrlConst {
     public final static String REPLY = "/reply";
     public final static String FOLLOW = "/follow";
     public static final String UNFOLLOW = "/unfollow";
+    public final static String DOWNLOAD = "/download";
+    public final static String FOLLOWERS = "/followers";
+    public final static String FOLLOWINGS = "/followings";
 }

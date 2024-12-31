@@ -12,11 +12,14 @@ import java.util.UUID;
 public record UpdatePostRequest(
 
         @Nullable
+        @Size(min = 5, max = 100)
         String postTitle,
 
         @Nullable
+        @Size(min = 20, max = 2000)
         String postIngredients,
 
+        @Size(min = 100, max = 3000)
         @Nullable
         String postContent,
 
@@ -25,6 +28,7 @@ public record UpdatePostRequest(
 
         @Nullable
         @NotBlank
+        @Size(min = 5, max = 100)
         String youtubeLink,
 
         @Nullable

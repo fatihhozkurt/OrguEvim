@@ -1,7 +1,7 @@
 package com.fatih.KnitShop.dto.response.post;
 
 import com.fatih.KnitShop.dto.response.image.ImageResponse;
-import com.fatih.KnitShop.dto.response.user.UserMiniProfile;
+import com.fatih.KnitShop.dto.response.user.UserMiniProfileResponse;
 
 import java.util.UUID;
 
@@ -15,6 +15,6 @@ public record PostSliderResponse(
         ImageResponse coverImage,
 
         //User fields
-        UserMiniProfile userMiniProfile
+        UserMiniProfileResponse userMiniProfileResponse
 ) {
 }

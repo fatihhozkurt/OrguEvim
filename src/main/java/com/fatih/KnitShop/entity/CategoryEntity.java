@@ -1,6 +1,7 @@
 package com.fatih.KnitShop.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fatih.KnitShop.entity.listeners.CategoryListener;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -18,10 +19,11 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "categories")
-@SQLRestriction("record_status <> '1'")
+@SQLRestriction("record_status <> 'true'")
+@EntityListeners(CategoryListener.class)
 public class CategoryEntity extends BaseEntity {
 
-    @Column(name = "category_name", updatable = false, unique = true, nullable = false, length = 20)
+    @Column(name = "category_name", unique = true, nullable = false, length = 20)
     private String categoryName;
 
     @PositiveOrZero

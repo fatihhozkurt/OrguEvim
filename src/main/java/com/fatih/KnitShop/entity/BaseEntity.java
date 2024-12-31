@@ -23,7 +23,7 @@ public class BaseEntity {
     @Column(name = "id")
     private UUID id;
 
-    //true is deleted (1),
+    //true is passive (1),
     //false is active (0)
     @Column(name = "record_status", nullable = false)
     private boolean recordStatus;

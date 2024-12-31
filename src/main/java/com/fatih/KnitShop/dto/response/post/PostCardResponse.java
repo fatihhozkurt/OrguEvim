@@ -2,9 +2,8 @@ package com.fatih.KnitShop.dto.response.post;
 
 import com.fatih.KnitShop.dto.response.category.CategoryResponse;
 import com.fatih.KnitShop.dto.response.image.ImageResponse;
-import com.fatih.KnitShop.dto.response.user.UserMiniProfile;
+import com.fatih.KnitShop.dto.response.user.UserMiniProfileResponse;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -16,7 +15,7 @@ public record PostCardResponse(
         String postTitle,
 
         //User fields
-        UserMiniProfile userMiniProfile,
+        UserMiniProfileResponse userMiniProfileResponse,
 
         //Category fields
         CategoryResponse categoryResponse,
