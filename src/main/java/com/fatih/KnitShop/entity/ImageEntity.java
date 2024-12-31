@@ -17,17 +17,14 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "images")
-@SQLRestriction("record_status <> '1'")
+@SQLRestriction("record_status <> 'true'")
 public class ImageEntity extends BaseEntity {
 
     @Column(name = "image_path", nullable = false, length = 500)
     private String imagePath;
 
-    @Column(name = "image_count", nullable = false)
-    private int imageCount;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
     @JsonManagedReference
     private PostEntity post;
 

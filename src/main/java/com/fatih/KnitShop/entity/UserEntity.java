@@ -2,6 +2,7 @@ package com.fatih.KnitShop.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fatih.KnitShop.entity.listeners.UserListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -20,22 +21,23 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "users")
-@SQLRestriction("record_status <> '1'")
+@SQLRestriction("record_status <> 'true'")
+@EntityListeners(UserListener.class)
 public class UserEntity extends BaseEntity {
 
-    @Column(name = "name", nullable = false, length = 43)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     @Column(name = "surname", nullable = false, length = 50)
     private String surname;
 
-    @Column(name = "username", nullable = false, length = 33, unique = true)
+    @Column(name = "username", nullable = false, length = 33)
     private String username;
 
-    @Column(name = "password", nullable = false, length = 255)
+    @Column(name = "password", nullable = false, length = 16)
     private String password;
 
-    @Column(name = "email", nullable = false, length = 345, unique = true)
+    @Column(name = "email", nullable = false, length = 345)
     private String email;
 
     @Column(name = "biography", columnDefinition = "TEXT", length = 500)
@@ -77,7 +79,7 @@ public class UserEntity extends BaseEntity {
     @JsonBackReference
     private List<PostEntity> posts;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "avatar_id", referencedColumnName = "id")
     @JsonManagedReference
     private ImageEntity avatarImage;

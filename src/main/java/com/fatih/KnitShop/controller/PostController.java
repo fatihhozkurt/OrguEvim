@@ -8,8 +8,6 @@ import com.fatih.KnitShop.dto.response.post.PostCardResponse;
 import com.fatih.KnitShop.dto.response.post.PostDetailResponse;
 import com.fatih.KnitShop.dto.response.post.PostSliderResponse;
 import com.fatih.KnitShop.dto.response.post.UserProfilePostCardResponse;
-import com.fatih.KnitShop.manager.service.PostService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,11 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequiredArgsConstructor
 public class PostController implements PostControllerApi {
-
-    private final PostService postService;
-
     @Override
     public ResponseEntity<PageImpl<PostSliderResponse>> getRandomPosts(Pageable pageable) {
         return null;

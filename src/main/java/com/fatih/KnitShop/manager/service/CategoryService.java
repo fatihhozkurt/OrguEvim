@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CategoryService {
-    void createCategory(String categoryName);
+
+    CategoryEntity createCategory(CategoryEntity category);
 
     CategoryEntity getCategoryById(UUID categoryId);
 
     List<CategoryEntity> getAllCategories();
 
     void deleteCategory(UUID categoryId);
+
+    CategoryEntity updateCategory(CategoryEntity category);
 }

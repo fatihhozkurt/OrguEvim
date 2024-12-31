@@ -3,7 +3,7 @@ package com.fatih.KnitShop.controller.api;
 import com.fatih.KnitShop.dto.request.like.*;
 import com.fatih.KnitShop.dto.response.like.LikeResponse;
 import com.fatih.KnitShop.dto.response.like.UnlikeResponse;
-import com.fatih.KnitShop.dto.response.user.UserMiniProfile;
+import com.fatih.KnitShop.dto.response.user.UserMiniProfileResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
@@ -35,17 +35,17 @@ public interface LikeControllerApi {
     ResponseEntity<UnlikeResponse> unlikeReply(@Valid @RequestBody UnlikeReplyRequest unlikeReplyRequest);
 
     @GetMapping(POST + ID)
-    ResponseEntity<UserMiniProfile> getLikesByPostId(@RequestParam("ownerId") @NotNull UUID ownerId,
-                                                     @RequestParam("postId") @NotNull UUID postId);
+    ResponseEntity<UserMiniProfileResponse> getLikesByPostId(@RequestParam("ownerId") @NotNull UUID ownerId,
+                                                             @RequestParam("postId") @NotNull UUID postId);
 
     @GetMapping(COMMENT + ID)
-    ResponseEntity<UserMiniProfile> getLikesByCommentId(@RequestParam("ownerId") @NotNull UUID ownerId,
-                                                        @RequestParam("postId") @NotNull UUID postId,
-                                                        @RequestParam("commentId") @NotNull UUID commentId);
+    ResponseEntity<UserMiniProfileResponse> getLikesByCommentId(@RequestParam("ownerId") @NotNull UUID ownerId,
+                                                                @RequestParam("postId") @NotNull UUID postId,
+                                                                @RequestParam("commentId") @NotNull UUID commentId);
 
     @GetMapping(REPLY + ID)
-    ResponseEntity<UserMiniProfile> getLikesByReplyId(@RequestParam("ownerId") @NotNull UUID ownerId,
-                                                      @RequestParam("postId") @NotNull UUID postId,
-                                                      @RequestParam("commentId") @NotNull UUID commentId,
-                                                      @RequestParam("replyId") @NotNull UUID replyId);
+    ResponseEntity<UserMiniProfileResponse> getLikesByReplyId(@RequestParam("ownerId") @NotNull UUID ownerId,
+                                                              @RequestParam("postId") @NotNull UUID postId,
+                                                              @RequestParam("commentId") @NotNull UUID commentId,
+                                                              @RequestParam("replyId") @NotNull UUID replyId);
 }

@@ -32,11 +32,11 @@ public interface CommentControllerApi {
     ResponseEntity<HttpStatus> deleteReply(@Valid @RequestBody DeleteReplyRequest deleteReplyRequest);
 
     @GetMapping(COMMENT + ID)
-    ResponseEntity<PageImpl<CommentResponse>> getCommentsByPostId(@RequestParam @NotNull UUID ownerId,
-                                                                  @RequestParam @NotNull UUID postId);
+    ResponseEntity<PageImpl<CommentResponse>> getCommentsByPostId(@RequestParam("ownerId") @NotNull UUID ownerId,
+                                                                  @RequestParam("postId") @NotNull UUID postId);
 
     @GetMapping(REPLY + ID)
-    ResponseEntity<PageImpl<CommentResponse>> getRepliesByCommentId(@RequestParam @NotNull UUID ownerId,
-                                                                    @RequestParam @NotNull UUID postId,
-                                                                    @RequestParam @NotNull UUID commentId);
+    ResponseEntity<PageImpl<CommentResponse>> getRepliesByCommentId(@RequestParam("ownerId") @NotNull UUID ownerId,
+                                                                    @RequestParam("postId") @NotNull UUID postId,
+                                                                    @RequestParam("commentId") @NotNull UUID commentId);
 }

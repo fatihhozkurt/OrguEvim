@@ -1,6 +1,7 @@
 package com.fatih.KnitShop.mapper;
 
-import com.fatih.KnitShop.dto.request.category.CategoryCreateRequest;
+import com.fatih.KnitShop.dto.request.category.CreateCategoryRequest;
+import com.fatih.KnitShop.dto.request.category.UpdateCategoryRequest;
 import com.fatih.KnitShop.dto.response.category.CategoryResponse;
 import com.fatih.KnitShop.entity.CategoryEntity;
 import org.mapstruct.Mapper;
@@ -19,5 +20,8 @@ public interface CategoryMapper {
 
     List<CategoryResponse> toCategoryResponseList(List<CategoryEntity> categoryEntities);
 
-    CategoryEntity toEntity(CategoryCreateRequest categoryCreateRequest);
+    CategoryEntity createCategoryRequestToEntity(CreateCategoryRequest createCategoryRequest);
+
+    @Mapping(target = "id", source = "categoryId")
+    CategoryEntity updateCategoryRequestToEntity(UpdateCategoryRequest updateCategoryRequest);
 }
