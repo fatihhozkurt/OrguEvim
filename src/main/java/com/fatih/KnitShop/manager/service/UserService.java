@@ -14,17 +14,17 @@ public interface UserService {
 
     void follow(UserFollowRequest userFollowRequest);
 
-    void unfollow(UserUnfollowRequest userUnfollowRequest);
+    void unfollow(UUID unfollowerId, UUID unfollowingId, UUID requesterId);
 
     List<UserEntity> getAllUsers();
 
     UserEntity createUser(UserEntity user);
 
-    UserEntity updateUser(UserEntity user);
+    UserEntity updateUser(UserEntity user, UUID userId);
 
-    void deleteUser(UUID userId);
+    void deleteUser(UUID ownerId, UUID requesterId);
 
-    Page<UserEntity> getFollowersById(UUID userId, Pageable pageable);
+    Page<UserEntity> getFollowersById(UUID ownerId, Pageable pageable);
 
-    Page<UserEntity> getFollowingsById(UUID userId, Pageable pageable);
+    Page<UserEntity> getFollowingsById(UUID ownerId, Pageable pageable);
 }

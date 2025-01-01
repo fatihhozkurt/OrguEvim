@@ -1,7 +1,6 @@
 package com.fatih.KnitShop.controller.api;
 
 import com.fatih.KnitShop.dto.request.post.CreatePostRequest;
-import com.fatih.KnitShop.dto.request.post.DeletePostRequest;
 import com.fatih.KnitShop.dto.request.post.UpdatePostRequest;
 import com.fatih.KnitShop.dto.response.post.PostCardResponse;
 import com.fatih.KnitShop.dto.response.post.PostDetailResponse;
@@ -22,29 +21,46 @@ import static com.fatih.KnitShop.url.UrlConst.*;
 @RequestMapping(POST)
 public interface PostControllerApi {
 
+    //Checked
     @GetMapping(RANDOM)
     ResponseEntity<PageImpl<PostSliderResponse>> getRandomPosts(Pageable pageable);
 
+    //Checked
     @GetMapping(ALL)
     ResponseEntity<PageImpl<PostCardResponse>> getAllPosts(Pageable pageable);
 
+    //Checked
     @GetMapping(ID)
     ResponseEntity<PostDetailResponse> getPostById(@RequestParam("ownerId") @NotNull UUID ownerId,
+
                                                    @RequestParam("postId") @NotNull UUID postId);
 
+    //Checked
     @GetMapping(USER + ID)
     ResponseEntity<PageImpl<UserProfilePostCardResponse>> getPostsByUserId(@RequestParam("ownerId") @NotNull UUID ownerId,
                                                                            Pageable pageable);
 
-    @DeleteMapping
-    ResponseEntity<HttpStatus> deletePost(@Valid @RequestBody DeletePostRequest deletePostRequest);
-
+    //Checked
     @GetMapping(CATEGORY + ID)
-    ResponseEntity<PostCardResponse> getPostsByCategoryId(@RequestParam("categoryId") @NotNull UUID categoryId);
+    ResponseEntity<PageImpl<PostCardResponse>> getPostsByCategoryId(@RequestParam("categoryId") @NotNull UUID categoryId,
+                                                                    Pageable pageable);
 
+    //Checked
     @PostMapping
-    ResponseEntity<HttpStatus> createPost(@Valid @RequestBody CreatePostRequest createPostRequest);
+    ResponseEntity<PostDetailResponse> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
+                                                  @RequestParam("userId") @NotNull UUID userId);
 
+    //Checked
+    @DeleteMapping
+    ResponseEntity<HttpStatus> deletePost(@RequestParam("ownerId") @NotNull UUID ownerId,
+                                          @RequestParam("postId") @NotNull UUID postId,
+                                          @RequestParam("userId") @NotNull UUID userId);
+
+    //Checked
     @PutMapping
-    ResponseEntity<HttpStatus> updatePost(@Valid @RequestBody UpdatePostRequest updatePostRequest);
+    ResponseEntity<PostDetailResponse> updatePost(@Valid @RequestBody UpdatePostRequest updatePostRequest,
+                                                  @RequestParam("userId") @NotNull UUID userId);
+
+    @DeleteMapping(ALL)
+    ResponseEntity<HttpStatus> deleteAllPosts();
 }

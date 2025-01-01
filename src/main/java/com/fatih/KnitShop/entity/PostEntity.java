@@ -2,6 +2,7 @@ package com.fatih.KnitShop.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fatih.KnitShop.entity.listeners.PostListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -10,9 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.engine.spi.CascadeStyle;
 
-import javax.xml.stream.events.Comment;
 import java.util.List;
 
 @Entity
@@ -23,6 +22,7 @@ import java.util.List;
 @SuperBuilder
 @Table(name = "posts")
 @SQLRestriction("record_status <> 'true'")
+@EntityListeners(PostListener.class)
 public class PostEntity extends BaseEntity {
 
     @Column(name = "title", nullable = false, length = 100)
@@ -64,6 +64,10 @@ public class PostEntity extends BaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<ImageEntity> images;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "cover_image_id", referencedColumnName = "id")
+    private ImageEntity coverImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)

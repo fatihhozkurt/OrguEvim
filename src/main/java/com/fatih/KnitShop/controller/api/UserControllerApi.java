@@ -23,40 +23,43 @@ import static com.fatih.KnitShop.url.UrlConst.*;
 @RequestMapping(USER)
 public interface UserControllerApi {
 
-    //Checked
+    //CheckedX
     @GetMapping(ID)
     ResponseEntity<UserProfileResponse> getUserById(@RequestParam("userId") @NotNull UUID userId);
 
-    //Checked
+    //CheckedX
     @PostMapping(FOLLOW)
     ResponseEntity<HttpStatus> followUser(@Valid @RequestBody UserFollowRequest userFollowRequest);
 
-    //Checked
+    //CheckedX
     @DeleteMapping(UNFOLLOW)
     ResponseEntity<HttpStatus> unfollowUser(@Valid @RequestBody UserUnfollowRequest userUnfollowRequest);
 
-    //Checked
+    //CheckedX
     @GetMapping(ALL)
     ResponseEntity<List<UserProfileResponse>> getAllUsers();
 
-    //Checked
+    //CheckedX
     @PostMapping
     ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest);
 
-    //Checked
+    //CheckedX
     @PutMapping
-    ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest updateUserRequest);
+    ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest updateUserRequest,
+                                            @RequestParam("requesterId") @NotNull UUID requesterId);
 
-    //Checked
+    //CheckedX
     @DeleteMapping
-    ResponseEntity<HttpStatus> deleteUser(@RequestParam("userId") @NotNull UUID userId);
+    ResponseEntity<HttpStatus> deleteUser(@RequestParam("ownerId") @NotNull UUID ownerId,
+                                          @RequestParam("requesterId") @NotNull UUID requesterId);
 
-    //Checked
+    //CheckedX
     @GetMapping((FOLLOWERS))
-    ResponseEntity<PageImpl<UserMiniProfileResponse>> getFollowers(@RequestParam("userId") @NotNull UUID userId,
+    ResponseEntity<PageImpl<UserMiniProfileResponse>> getFollowers(@RequestParam("ownerId") @NotNull UUID ownerId,
                                                                    Pageable pageable);
-    //Checked
+
+    //CheckedX
     @GetMapping(FOLLOWINGS)
-    ResponseEntity<PageImpl<UserMiniProfileResponse>> getFollowings(@RequestParam("userId") @NotNull UUID userId,
+    ResponseEntity<PageImpl<UserMiniProfileResponse>> getFollowings(@RequestParam("ownerId") @NotNull UUID ownerId,
                                                                     Pageable pageable);
 }

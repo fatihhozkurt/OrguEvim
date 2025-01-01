@@ -3,11 +3,13 @@ package com.fatih.KnitShop.entity.listeners;
 import com.fatih.KnitShop.entity.UserEntity;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import static com.fatih.KnitShop.url.RecordStatus.*;
 
 @Component
+@RequiredArgsConstructor
 public class UserListener {
 
     @PrePersist
@@ -22,18 +24,13 @@ public class UserListener {
     public void preDelete(UserEntity user) {
 
         if (user.isRecordStatus()) {
+            user.getFollowers().clear();
+            user.getFollowing().clear();
 
-            user.getFollowers().forEach(follower -> {
-                follower.setRecordStatus(PASSIVE);
-            });
+            user.setFollowersCount(0L);
+            user.setFollowingCount(0L);
 
-            user.getFollowing().forEach(following -> {
-                following.setRecordStatus(PASSIVE);
-            });
-
-            user.getPosts().forEach(post -> {
-                post.setRecordStatus(PASSIVE);
-            });
+            user.setPostCount(0L);
 
             user.getComments().forEach(comment -> {
                 comment.setRecordStatus(PASSIVE);
@@ -42,5 +39,4 @@ public class UserListener {
             user.getAvatarImage().setRecordStatus(PASSIVE);
         }
     }
-
 }

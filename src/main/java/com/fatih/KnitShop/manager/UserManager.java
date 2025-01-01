@@ -1,14 +1,14 @@
 package com.fatih.KnitShop.manager;
 
 import com.fatih.KnitShop.dto.request.user.UserFollowRequest;
-import com.fatih.KnitShop.dto.request.user.UserUnfollowRequest;
 import com.fatih.KnitShop.entity.ImageEntity;
+import com.fatih.KnitShop.entity.PostEntity;
 import com.fatih.KnitShop.entity.UserEntity;
 import com.fatih.KnitShop.exception.DataAlreadyExistException;
 import com.fatih.KnitShop.exception.ResourceNotFoundException;
+import com.fatih.KnitShop.exception.UnauthorizedException;
 import com.fatih.KnitShop.manager.service.UserService;
 import com.fatih.KnitShop.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -43,9 +43,16 @@ public class UserManager implements UserService {
     @Transactional
     @Override
     public void follow(UserFollowRequest userFollowRequest) {
+        //Takip edecek kişi
         UserEntity follower = getUserById(userFollowRequest.followerId());
+
+        //Takip edilecek kişi
         UserEntity following = getUserById(userFollowRequest.followingId());
 
+        //Request gönderen kişi isteği gönderen kişiyle aynı mı?
+        checkAuthority(userFollowRequest.followerId(), userFollowRequest.requesterId());
+
+        //Takipçi zaten takip ediyor mu?
         validateFollow(follower, following);
 
         following.getFollowers().add(follower);
@@ -59,9 +66,11 @@ public class UserManager implements UserService {
 
     @Transactional
     @Override
-    public void unfollow(UserUnfollowRequest userUnfollowRequest) {
-        UserEntity follower = getUserById(userUnfollowRequest.followerId());
-        UserEntity following = getUserById(userUnfollowRequest.followingId());
+    public void unfollow(UUID unfollowerId, UUID unfollowingId, UUID requesterId) {
+        UserEntity follower = getUserById(unfollowerId);
+        UserEntity following = getUserById(unfollowingId);
+
+        checkAuthority(unfollowerId, requesterId);
 
         validateUnfollow(follower, following);
 
@@ -85,8 +94,10 @@ public class UserManager implements UserService {
     @Override
     public UserEntity createUser(UserEntity user) {
 
+        //Username ve email'i kontrol et
         validateUserEmailAndUsername(user.getUsername(), user.getEmail());
 
+        //Alanları tek tek setle
         UserEntity foundUser = UserEntity.builder()
                 .name(user.getName())
                 .surname(user.getSurname())
@@ -96,6 +107,7 @@ public class UserManager implements UserService {
                 .biography(user.getBiography())
                 .build();
 
+        //Avatar için yeni bir avatar nesnesi oluşturup kullanıcıya setle
         ImageEntity imageEntity = ImageEntity.builder()
                 .imagePath(user.getAvatarImage().getImagePath())
                 .user(foundUser)
@@ -108,22 +120,48 @@ public class UserManager implements UserService {
 
     @Transactional
     @Override
-    public UserEntity updateUser(UserEntity requestedUser) {
+    public UserEntity updateUser(UserEntity requestedUser, UUID requesterId) {
 
+        //Güncellenecek kullanıcıyı kontrol et
         UserEntity foundUser = getUserById(requestedUser.getId());
 
-        updateChecks(requestedUser, foundUser);
+        //Güncelleyecek kullanıcıyı kontrol et
+        getUserById(requesterId);
 
-        return userRepository.save(foundUser);
+        //Güncelleyecek ve güncellenecek kullanıcılar aynı kişi mi?
+        checkAuthority(requestedUser.getId(), requesterId);
+
+        //Güncelleme işlemlerini yapan metot ve kaydet.
+        return updateChecks(requestedUser, foundUser);
     }
 
 
     @Transactional
     @Override
-    public void deleteUser(UUID userId) {
+    public void deleteUser(UUID ownerId, UUID requesterId) {
 
-        UserEntity foundUser = getUserById(userId);
+        //Silinecek user'ım var mı?
+        UserEntity foundUser = getUserById(ownerId);
+        //Silecek kişi var mı?
+        getUserById(requesterId);
+        //Silinecek kişi ile silmek iseyen kişi aynı mı?
+        checkAuthority(ownerId, requesterId);
 
+        //Bu adamın takip ettikleri ve takipçileri var
+        List<UserEntity> followers = getFollowersById(foundUser.getId(), Pageable.unpaged()).getContent();
+        List<UserEntity> followings = getFollowingsById(foundUser.getId(), Pageable.unpaged()).getContent();
+
+        //Takipçilerinde gezip her birisi için bu adamı unfollow ettir.
+        followers.forEach(follower -> unfollow(follower.getId(), foundUser.getId(), follower.getId()));
+
+        //Takip ettiklerinde gezip her birisini unfollow et
+        followings.forEach(following -> unfollow(foundUser.getId(), following.getId(), foundUser.getId()));
+
+        List<PostEntity> posts = foundUser.getPosts();
+        posts.forEach(post -> post.setRecordStatus(PASSIVE));
+        foundUser.setPosts(posts);
+
+        //Silinecek kişi silindi
         foundUser.setRecordStatus(PASSIVE);
 
         userRepository.save(foundUser);
@@ -131,18 +169,18 @@ public class UserManager implements UserService {
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
-    public Page<UserEntity> getFollowersById(UUID userId, Pageable pageable) {
+    public Page<UserEntity> getFollowersById(UUID ownerId, Pageable pageable) {
 
-        UserEntity user = getUserById(userId);
+        UserEntity user = getUserById(ownerId);
 
         return new PageImpl<>(user.getFollowers(), pageable, user.getFollowers().size());
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
-    public Page<UserEntity> getFollowingsById(UUID userId, Pageable pageable) {
+    public Page<UserEntity> getFollowingsById(UUID ownerId, Pageable pageable) {
 
-        UserEntity user = getUserById(userId);
+        UserEntity user = getUserById(ownerId);
 
         return new PageImpl<>(user.getFollowing(), pageable, user.getFollowing().size());
     }
@@ -183,13 +221,13 @@ public class UserManager implements UserService {
 //                    Locale.getDefault()));
 //        }
 
-        userRepository.findUserEntityByUsername(username).ifPresent(user -> {
+        userRepository.findByUsername(username).ifPresent(user -> {
             throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U004",
                     new Object[]{username},
                     Locale.getDefault()));
         });
 
-        userRepository.findUserEntityByEmail(email).ifPresent(user -> {
+        userRepository.findByEmail(email).ifPresent(user -> {
             throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U005",
                     new Object[]{email},
                     Locale.getDefault()));
@@ -197,8 +235,8 @@ public class UserManager implements UserService {
     }
 
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public void updateChecks(UserEntity requestedUser, UserEntity foundUser) {
+    @Transactional
+    public UserEntity updateChecks(UserEntity requestedUser, UserEntity foundUser) {
         if (requestedUser.getUsername() != null || requestedUser.getEmail() != null) {
             validateUserEmailAndUsername(requestedUser.getUsername(), requestedUser.getEmail());
         }
@@ -221,7 +259,20 @@ public class UserManager implements UserService {
             foundUser.setBiography(requestedUser.getBiography());
         }
         if (requestedUser.getAvatarImage().getImagePath() != null) {
-            foundUser.getAvatarImage().setImagePath(requestedUser.getAvatarImage().getImagePath());
+            foundUser.getAvatarImage().setRecordStatus(PASSIVE);
+            ImageEntity newAvatarImage = requestedUser.getAvatarImage();
+            foundUser.setAvatarImage(newAvatarImage);
+        }
+
+        return userRepository.save(foundUser);
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public void checkAuthority(UUID ownerId, UUID requesterId) {
+        if (!(ownerId.equals(requesterId))) {
+            throw new UnauthorizedException(messageSource.getMessage("backend.exceptions.U006",
+                    new Object[]{requesterId, ownerId},
+                    Locale.getDefault()));
         }
     }
 }

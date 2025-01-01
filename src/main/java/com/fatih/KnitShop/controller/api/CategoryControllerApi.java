@@ -17,23 +17,23 @@ import static com.fatih.KnitShop.url.UrlConst.*;
 @RequestMapping(CATEGORY)
 public interface CategoryControllerApi {
 
-    //Checked
+    //CheckedX
     @GetMapping(ALL)
     ResponseEntity<List<CategoryResponse>> getAllCategories();
 
-    //Checked
+    //CheckedX
     @PostMapping
     ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CreateCategoryRequest createCategoryRequest);
 
-    //Checked
+    //CheckedX
     @GetMapping(ID)
     ResponseEntity<CategoryResponse> getCategoryById(@RequestParam("categoryId") @NotNull UUID categoryId);
 
-    //Checked
+    //CheckedX
     @DeleteMapping
     ResponseEntity<HttpStatus> deleteCategoryById(@RequestParam("categoryId") @NotNull UUID categoryId);
 
-    //Checked
+    //CheckedX
     @PutMapping
     ResponseEntity<CategoryResponse> updateCategory(@Valid @RequestBody UpdateCategoryRequest updateCategoryRequest);
 }

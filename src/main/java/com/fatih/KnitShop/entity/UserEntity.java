@@ -80,7 +80,7 @@ public class UserEntity extends BaseEntity {
     private List<PostEntity> posts;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "avatar_id", referencedColumnName = "id")
+    @JoinColumn(name = "avatar_image_id", referencedColumnName = "id")
     @JsonManagedReference
     private ImageEntity avatarImage;
 }

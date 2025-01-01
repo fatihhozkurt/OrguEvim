@@ -2,6 +2,7 @@ package com.fatih.KnitShop.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fatih.KnitShop.entity.listeners.ImageListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SuperBuilder
 @Table(name = "images")
 @SQLRestriction("record_status <> 'true'")
+@EntityListeners(ImageListener.class)
 public class ImageEntity extends BaseEntity {
 
     @Column(name = "image_path", nullable = false, length = 500)
@@ -32,4 +34,7 @@ public class ImageEntity extends BaseEntity {
     @JsonBackReference
     private UserEntity user;
 
+    @OneToOne(mappedBy = "coverImage")
+    @JsonBackReference
+    private PostEntity postCover;
 }

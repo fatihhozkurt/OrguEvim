@@ -23,8 +23,8 @@ public class CategoryController implements CategoryControllerApi {
 
     @Override
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
-        List<CategoryEntity> categories = categoryService.getAllCategories();
-        List<CategoryResponse> categoryResponses = CategoryMapper.INSTANCE.toCategoryResponseList(categories);
+        List<CategoryEntity> foundCategories = categoryService.getAllCategories();
+        List<CategoryResponse> categoryResponses = CategoryMapper.INSTANCE.toCategoryResponseList(foundCategories);
         return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     }
 
@@ -38,8 +38,8 @@ public class CategoryController implements CategoryControllerApi {
 
     @Override
     public ResponseEntity<CategoryResponse> getCategoryById(UUID categoryId) {
-        CategoryEntity category = categoryService.getCategoryById(categoryId);
-        CategoryResponse categoryResponse = CategoryMapper.INSTANCE.toCategoryResponse(category);
+        CategoryEntity foundCategory = categoryService.getCategoryById(categoryId);
+        CategoryResponse categoryResponse = CategoryMapper.INSTANCE.toCategoryResponse(foundCategory);
         return new ResponseEntity<>(categoryResponse, HttpStatus.FOUND);
     }
 

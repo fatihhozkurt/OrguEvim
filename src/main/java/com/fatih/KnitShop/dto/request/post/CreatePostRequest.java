@@ -1,7 +1,8 @@
 package com.fatih.KnitShop.dto.request.post;
 
-import com.fatih.KnitShop.dto.response.image.ImageResponse;
+import com.fatih.KnitShop.dto.request.image.UploadImageRequest;
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -37,9 +38,10 @@ public record CreatePostRequest(
 
         @NotEmpty
         @Size(min = 1)
-        List<ImageResponse> postImages,
+        @Valid
+        List<UploadImageRequest> postImages,
 
         @NotNull
-        UUID userId
+        UUID ownerId
 ) {
 }

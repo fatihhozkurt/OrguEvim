@@ -41,47 +41,53 @@ public class UserController implements UserControllerApi {
     }
 
     @Override
-    public ResponseEntity<UserResponse> updateUser(UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<UserResponse> updateUser(UpdateUserRequest updateUserRequest, UUID requesterId) {
 
         UserEntity user = UserMapper.INSTANCE.updateUserRequestToUserEntity(updateUserRequest);
-        UserEntity updatedUser = userService.updateUser(user);
+        UserEntity updatedUser = userService.updateUser(user, requesterId);
         UserResponse userResponse = UserMapper.INSTANCE.toUserResponse(updatedUser);
 
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<HttpStatus> deleteUser(UUID userId) {
+    public ResponseEntity<HttpStatus> deleteUser(UUID ownerId, UUID requesterId) {
 
-        userService.deleteUser(userId);
+        userService.deleteUser(ownerId, requesterId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
-    public ResponseEntity<PageImpl<UserMiniProfileResponse>> getFollowers(UUID userId, Pageable pageable) {
+    public ResponseEntity<PageImpl<UserMiniProfileResponse>> getFollowers(UUID ownerId, Pageable pageable) {
 
-        Page<UserEntity> userEntities = userService.getFollowersById(userId, pageable);
+        Page<UserEntity> foundFollowers = userService.getFollowersById(ownerId, pageable);
         List<UserMiniProfileResponse> userMiniProfileResponses
-                = UserMapper.INSTANCE.toUserMiniProfileResponseList(userEntities.getContent());
+                = UserMapper.INSTANCE.toUserMiniProfileResponseList(foundFollowers.getContent());
 
-        return new ResponseEntity<>(new PageImpl<>(userMiniProfileResponses), HttpStatus.FOUND);
+        return new ResponseEntity<>(new PageImpl<>(userMiniProfileResponses,
+                pageable,
+                foundFollowers.getTotalElements()),
+                HttpStatus.FOUND);
     }
 
     @Override
-    public ResponseEntity<PageImpl<UserMiniProfileResponse>> getFollowings(UUID userId, Pageable pageable) {
+    public ResponseEntity<PageImpl<UserMiniProfileResponse>> getFollowings(UUID ownerId, Pageable pageable) {
 
-        Page<UserEntity> userEntities = userService.getFollowingsById(userId, pageable);
+        Page<UserEntity> foundFollowings = userService.getFollowingsById(ownerId, pageable);
         List<UserMiniProfileResponse> userMiniProfileResponses
-                = UserMapper.INSTANCE.toUserMiniProfileResponseList(userEntities.getContent());
+                = UserMapper.INSTANCE.toUserMiniProfileResponseList(foundFollowings.getContent());
 
-        return new ResponseEntity<>(new PageImpl<>(userMiniProfileResponses), HttpStatus.FOUND);
+        return new ResponseEntity<>(new PageImpl<>(userMiniProfileResponses,
+                pageable,
+                foundFollowings.getTotalElements()),
+                HttpStatus.FOUND);
     }
 
     @Override
     public ResponseEntity<UserProfileResponse> getUserById(UUID userId) {
-        UserEntity user = userService.getUserById(userId);
-        UserProfileResponse response = UserMapper.INSTANCE.toUserProfileResponse(user);
+        UserEntity foundUser = userService.getUserById(userId);
+        UserProfileResponse response = UserMapper.INSTANCE.toUserProfileResponse(foundUser);
         return new ResponseEntity<>(response, HttpStatus.FOUND);
     }
 
@@ -94,16 +100,17 @@ public class UserController implements UserControllerApi {
 
     @Override
     public ResponseEntity<HttpStatus> unfollowUser(UserUnfollowRequest userUnfollowRequest) {
-        userService.unfollow(userUnfollowRequest);
+        userService.unfollow(userUnfollowRequest.unfollowerId(),
+                userUnfollowRequest.unfollowingId(),
+                userUnfollowRequest.requesterId());
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
     public ResponseEntity<List<UserProfileResponse>> getAllUsers() {
-        List<UserEntity> users = userService.getAllUsers();
-        List<UserProfileResponse> userProfileResponses = UserMapper.INSTANCE.toUserProfileResponseList(users);
+        List<UserEntity> foundUsers = userService.getAllUsers();
+        List<UserProfileResponse> userProfileResponses = UserMapper.INSTANCE.toUserProfileResponseList(foundUsers);
         return new ResponseEntity<>(userProfileResponses, HttpStatus.OK);
     }
-
-    //TODO DELETE, UPDATE
 }

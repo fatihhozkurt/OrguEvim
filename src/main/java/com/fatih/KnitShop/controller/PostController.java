@@ -2,59 +2,119 @@ package com.fatih.KnitShop.controller;
 
 import com.fatih.KnitShop.controller.api.PostControllerApi;
 import com.fatih.KnitShop.dto.request.post.CreatePostRequest;
-import com.fatih.KnitShop.dto.request.post.DeletePostRequest;
 import com.fatih.KnitShop.dto.request.post.UpdatePostRequest;
 import com.fatih.KnitShop.dto.response.post.PostCardResponse;
 import com.fatih.KnitShop.dto.response.post.PostDetailResponse;
 import com.fatih.KnitShop.dto.response.post.PostSliderResponse;
 import com.fatih.KnitShop.dto.response.post.UserProfilePostCardResponse;
+import com.fatih.KnitShop.entity.PostEntity;
+import com.fatih.KnitShop.manager.service.PostService;
+import com.fatih.KnitShop.mapper.PostMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 public class PostController implements PostControllerApi {
+
+    private final PostService postService;
+
     @Override
     public ResponseEntity<PageImpl<PostSliderResponse>> getRandomPosts(Pageable pageable) {
-        return null;
+
+        Page<PostEntity> foundPosts = postService.getRandomPosts(pageable);
+        List<PostSliderResponse> postSliderResponses = PostMapper.INSTANCE.toPostSliderResponseList(foundPosts.getContent());
+        return new ResponseEntity<>(new PageImpl<>(postSliderResponses,
+                pageable,
+                foundPosts.getTotalElements()),
+                HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<PageImpl<PostCardResponse>> getAllPosts(Pageable pageable) {
-        return null;
+
+        Page<PostEntity> foundPosts = postService.getAllPosts(pageable);
+        List<PostCardResponse> postCardResponses = PostMapper.INSTANCE.toPostCardResponseList(foundPosts.getContent());
+
+        return new ResponseEntity<>(new PageImpl<>(postCardResponses,
+                pageable,
+                foundPosts.getTotalElements()),
+                HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<PostDetailResponse> getPostById(UUID ownerId, UUID postId) {
-        return null;
+
+        PostEntity postEntity = postService.getPostById(ownerId, postId);
+        PostDetailResponse postDetailResponse = PostMapper.INSTANCE.toPostDetailResponse(postEntity);
+
+        return new ResponseEntity<>(postDetailResponse, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<PageImpl<UserProfilePostCardResponse>> getPostsByUserId(UUID ownerId, Pageable pageable) {
-        return null;
+
+        Page<PostEntity> postEntities = postService.getPostsByUserId(ownerId, pageable);
+        List<UserProfilePostCardResponse> postCardResponses =
+                PostMapper.INSTANCE.toUserProfilePostCardResponseList(postEntities.getContent());
+
+        return new ResponseEntity<>(new PageImpl<>(postCardResponses,
+                pageable,
+                postEntities.getTotalElements()),
+                HttpStatus.FOUND);
     }
 
     @Override
-    public ResponseEntity<HttpStatus> deletePost(DeletePostRequest deletePostRequest) {
-        return null;
+    public ResponseEntity<PageImpl<PostCardResponse>> getPostsByCategoryId(UUID categoryId, Pageable pageable) {
+
+        Page<PostEntity> foundPosts = postService.getPostsByCategoryId(categoryId, pageable);
+        List<PostCardResponse> postCardResponses = PostMapper.INSTANCE.toPostCardResponseList(foundPosts.getContent());
+
+        return new ResponseEntity<>(new PageImpl<>(postCardResponses,
+                pageable,
+                foundPosts.getTotalElements()),
+                HttpStatus.FOUND);
     }
 
     @Override
-    public ResponseEntity<PostCardResponse> getPostsByCategoryId(UUID categoryId) {
-        return null;
+    public ResponseEntity<HttpStatus> deletePost(UUID ownerId, UUID postId, UUID userId) {
+
+        postService.deletePost(ownerId, postId, userId);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
-    public ResponseEntity<HttpStatus> createPost(CreatePostRequest createPostRequest) {
-        return null;
+    public ResponseEntity<PostDetailResponse> createPost(CreatePostRequest createPostRequest, UUID userId) {
+
+        PostEntity postEntity = PostMapper.INSTANCE.createPostRequestToEntity(createPostRequest);
+        PostEntity savedPost = postService.createPost(postEntity, userId);
+        PostDetailResponse postDetailResponse = PostMapper.INSTANCE.toPostDetailResponse(savedPost);
+
+        return new ResponseEntity<>(postDetailResponse, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<HttpStatus> updatePost(UpdatePostRequest updatePostRequest) {
-        return null;
+    public ResponseEntity<PostDetailResponse> updatePost(UpdatePostRequest updatePostRequest, UUID userId) {
+
+        PostEntity postEntity = PostMapper.INSTANCE.updatePostRequestToEntity(updatePostRequest);
+        PostEntity updatedPost = postService.updatePost(postEntity, userId);
+        PostDetailResponse postDetailResponse = PostMapper.INSTANCE.toPostDetailResponse(updatedPost);
+
+        return new ResponseEntity<>(postDetailResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> deleteAllPosts() {
+        postService.deleteAllPosts();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
