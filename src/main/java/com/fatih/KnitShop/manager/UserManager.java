@@ -61,7 +61,7 @@ public class UserManager implements UserService {
         updateFollowCounts(follower, following);
 
         userRepository.save(follower);
-        userRepository.save(following);0
+        userRepository.save(following);
     }
 
     @Transactional
