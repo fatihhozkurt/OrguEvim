@@ -15,13 +15,17 @@ public interface CategoryMapper {
 
     CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
 
+    //Checked
     @Mapping(target = "categoryId", source = "id")
     CategoryResponse toCategoryResponse(CategoryEntity categoryEntity);
 
+    //Checked
     List<CategoryResponse> toCategoryResponseList(List<CategoryEntity> categoryEntities);
 
+    //Checked
     CategoryEntity createCategoryRequestToEntity(CreateCategoryRequest createCategoryRequest);
 
+    //Checked
     @Mapping(target = "id", source = "categoryId")
     CategoryEntity updateCategoryRequestToEntity(UpdateCategoryRequest updateCategoryRequest);
 }

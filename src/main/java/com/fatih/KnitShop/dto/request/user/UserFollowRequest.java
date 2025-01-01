@@ -10,6 +10,9 @@ public record UserFollowRequest(
         UUID followerId,
 
         @NotNull
-        UUID followingId
+        UUID followingId,
+
+        @NotNull
+        UUID requesterId
 ) {
 }

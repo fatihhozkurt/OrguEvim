@@ -10,6 +10,5 @@ public record UploadImageRequest(
         @NotBlank
         @Size(min = 10, max = 500)
         String imagePath
-
 ) {
 }

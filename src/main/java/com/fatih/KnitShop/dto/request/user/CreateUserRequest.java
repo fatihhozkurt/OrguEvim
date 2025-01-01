@@ -1,6 +1,8 @@
 package com.fatih.KnitShop.dto.request.user;
 
+import com.fatih.KnitShop.dto.request.image.UploadImageRequest;
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 public record CreateUserRequest(
@@ -17,7 +19,7 @@ public record CreateUserRequest(
 
         @NotNull
         @NotBlank
-        @Pattern(regexp = "^[a-z]+$")
+        @Pattern(regexp = "^[a-z0-9]+$")
         @Size(min = 5, max = 33)
         String username,
 
@@ -38,9 +40,7 @@ public record CreateUserRequest(
         @Size(min = 1, max = 500)
         String biography,
 
-        @Nullable
-        @NotBlank
-        @Size(min = 10, max = 500)
-        String userAvatar
+        @Valid
+        UploadImageRequest userAvatar
 ) {
 }

@@ -16,14 +16,15 @@ import static com.fatih.KnitShop.url.UrlConst.*;
 @RequestMapping(IMAGE)
 public interface ImageControllerApi {
 
+
     @PostMapping
-    ResponseEntity<HttpStatus> uploadImage(@Valid @RequestBody List<UploadImageRequest> uploadImageRequest);
+    ResponseEntity<ImageResponse> uploadImage(@Valid @RequestBody List<UploadImageRequest> uploadImageRequest);
 
     @GetMapping(ALL)
     ResponseEntity<List<ImageResponse>> getAllImages();
 
-    @GetMapping(DOWNLOAD)
-    ResponseEntity<ImageResponse> downloadImage(@RequestParam("imageId") @NotNull UUID imageId);
+    //    @GetMapping(DOWNLOAD)
+    //    ResponseEntity<ImageResponse> downloadImage(@RequestParam("imageId") @NotNull UUID imageId);
 
     @GetMapping(ID)
     ResponseEntity<ImageResponse> getImageById(@RequestParam("imageId") @NotNull UUID imageId);

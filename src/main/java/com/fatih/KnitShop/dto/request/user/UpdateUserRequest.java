@@ -1,6 +1,8 @@
 package com.fatih.KnitShop.dto.request.user;
 
 import com.fatih.KnitShop.annotation.OptionalFieldValidation;
+import com.fatih.KnitShop.dto.request.image.UpdateImageRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
@@ -8,7 +10,7 @@ import java.util.UUID;
 public record UpdateUserRequest(
 
         @NotNull
-        UUID userId,
+        UUID ownerId,
 
         @OptionalFieldValidation(notBlank = true, min = 2, max = 50)
         String name,
@@ -33,7 +35,7 @@ public record UpdateUserRequest(
         @OptionalFieldValidation(notBlank = true, min = 1, max = 500)
         String biography,
 
-        @OptionalFieldValidation(notBlank = true, min = 10, max = 500)
-        String userAvatar
+        @Valid
+        UpdateImageRequest userAvatar
 ) {
 }

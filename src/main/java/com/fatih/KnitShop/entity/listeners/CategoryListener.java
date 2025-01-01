@@ -22,6 +22,7 @@ public class CategoryListener {
     public void preDelete(CategoryEntity category) {
         if (category.isRecordStatus()) {
             category.getPosts().forEach(post -> post.setRecordStatus(PASSIVE));
+            category.setPostCount(0L);
         }
     }
 }

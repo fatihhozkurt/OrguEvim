@@ -12,32 +12,38 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(uses = {ImageMapper.class})
+@Mapper(uses = {ImageMapper.class, CategoryMapper.class})
 public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+    //Checked
     @Mapping(target = "userId", source = "id")
-    @Mapping(target = "avatarImage.imagePath", source = "avatarImage.imagePath")
+    @Mapping(target = "avatarImage", source = "avatarImage")
     UserProfileResponse toUserProfileResponse(UserEntity userEntity);
 
+    //Checked
     List<UserProfileResponse> toUserProfileResponseList(List<UserEntity> userEntities);
 
-    @Mapping(target = "avatarImage.imagePath", source = "userAvatar")
+    //Checked
+    @Mapping(target = "avatarImage", source = "userAvatar")
     UserEntity createUserRequestToUserEntity(CreateUserRequest createUserRequest);
 
-    @Mapping(target = "id", source = "userId")
-    @Mapping(target = "avatarImage.imagePath", source = "userAvatar")
+    //Checked
+    @Mapping(target = "id", source = "ownerId")
+    @Mapping(target = "avatarImage", source = "userAvatar")
     UserEntity updateUserRequestToUserEntity(UpdateUserRequest updateUserRequest);
 
+    //Checked
     @Mapping(target = "userId", source = "id")
-    @Mapping(target = "imageResponse.imagePath", source = "avatarImage.imagePath")
+    @Mapping(target = "imageResponse", source = "avatarImage")
     UserResponse toUserResponse(UserEntity userEntity);
 
+    //Checked
     @Mapping(target = "ownerId", source = "id")
-    @Mapping(target = "avatarImage.imagePath", source = "avatarImage.imagePath")
+    @Mapping(target = "avatarImage", source = "avatarImage")
     UserMiniProfileResponse toUserMiniProfileResponse(UserEntity userEntity);
 
+    //Checked
     List<UserMiniProfileResponse> toUserMiniProfileResponseList(List<UserEntity> userEntities);
-
 }

@@ -7,9 +7,12 @@ import java.util.UUID;
 public record UserUnfollowRequest(
 
         @NotNull
-        UUID followerId,
+        UUID unfollowerId,
 
         @NotNull
-        UUID followingId
+        UUID unfollowingId,
+
+        @NotNull
+        UUID requesterId
 ) {
 }
