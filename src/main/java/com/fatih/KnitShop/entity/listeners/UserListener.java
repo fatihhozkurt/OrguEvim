@@ -12,6 +12,7 @@ import static com.fatih.KnitShop.url.RecordStatus.*;
 @RequiredArgsConstructor
 public class UserListener {
 
+    //Checked
     @PrePersist
     public void prePersist(UserEntity user) {
         user.setRecordStatus(ACTIVE);
@@ -20,9 +21,9 @@ public class UserListener {
         user.setPostCount(0L);
     }
 
+    //Checked
     @PreUpdate
     public void preDelete(UserEntity user) {
-
         if (user.isRecordStatus()) {
             user.getFollowers().clear();
             user.getFollowing().clear();
@@ -31,12 +32,6 @@ public class UserListener {
             user.setFollowingCount(0L);
 
             user.setPostCount(0L);
-
-            user.getComments().forEach(comment -> {
-                comment.setRecordStatus(PASSIVE);
-            });
-
-            user.getAvatarImage().setRecordStatus(PASSIVE);
         }
     }
 }

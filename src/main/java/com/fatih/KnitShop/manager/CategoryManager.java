@@ -23,7 +23,9 @@ public class CategoryManager implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final MessageSource messageSource;
+    private final SoftDeletePostRelationsManager softDeletePostRelationsManager;
 
+    //Checked
     @Transactional
     @Override
     public CategoryEntity createCategory(CategoryEntity category) {
@@ -35,6 +37,7 @@ public class CategoryManager implements CategoryService {
                 .build());
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public CategoryEntity getCategoryById(UUID categoryId) {
@@ -45,22 +48,28 @@ public class CategoryManager implements CategoryService {
                         Locale.getDefault())));
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public List<CategoryEntity> getAllCategories() {
         return categoryRepository.findAll();
     }
 
+    //Checked
     @Transactional
     @Override
     public void deleteCategory(UUID categoryId) {
 
         CategoryEntity category = getCategoryById(categoryId);
+
+        category.getPosts().forEach(softDeletePostRelationsManager::softDeletePostRelations);
+
         category.setRecordStatus(PASSIVE);
 
         categoryRepository.save(category);
     }
 
+    //Checked
     @Transactional
     @Override
     public CategoryEntity updateCategory(CategoryEntity category) {
@@ -75,6 +84,7 @@ public class CategoryManager implements CategoryService {
         return categoryRepository.save(foundCategory);
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void checkCategoryName(String categoryName) {
         if (categoryRepository.findByCategoryName(categoryName.toLowerCase(Locale.ROOT)).isPresent()) {

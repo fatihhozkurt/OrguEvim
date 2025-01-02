@@ -17,11 +17,11 @@ public interface PostService {
 
     Page<PostEntity> getPostsByCategoryId(UUID categoryId, Pageable pageable);
 
-    PostEntity createPost(PostEntity postEntity, UUID userId);
+    PostEntity createPost(PostEntity postEntity, UUID requesterId);
 
-    void deletePost(UUID ownerId, UUID postId, UUID userId);
+    void deletePost(UUID ownerId, UUID postId, UUID requesterId);
 
-    PostEntity updatePost(PostEntity postEntity, UUID userId);
+    PostEntity updatePost(PostEntity postEntity, UUID requesterId);
 
     void deleteAllPosts();
 }

@@ -31,14 +31,16 @@ public class PostManager implements PostService {
     private final MessageSource messageSource;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final SoftDeletePostRelationsManager softDeletePostRelationsManager;
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public Page<PostEntity> getAllPosts(Pageable pageable) {
         return postRepository.findAll(pageable);
-
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public Page<PostEntity> getRandomPosts(Pageable pageable) {
@@ -49,7 +51,7 @@ public class PostManager implements PostService {
         return new PageImpl<>(foundPosts, pageable, foundPosts.size());
     }
 
-
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public PostEntity getPostById(UUID ownerId, UUID postId) {
@@ -83,12 +85,12 @@ public class PostManager implements PostService {
 
     @Transactional
     @Override
-    public PostEntity createPost(PostEntity requestedPost, UUID userId) {
+    public PostEntity createPost(PostEntity requestedPost, UUID requesterId) {
 
         UserEntity userEntity = userService.getUserById(requestedPost.getUser().getId());
         CategoryEntity categoryEntity = categoryService.getCategoryById(requestedPost.getCategory().getId());
 
-        checkAuthority(requestedPost.getUser().getId(), userId);
+        checkAuthority(requestedPost.getUser().getId(), requesterId);
 
         PostEntity post = PostEntity.builder()
                 .title(requestedPost.getTitle())
@@ -102,7 +104,6 @@ public class PostManager implements PostService {
         post.setImages(postImages);
         post.setImageCount((long) postImages.size());
 
-
         ImageEntity coverImage = requestedPost.getImages().getFirst();
         post.setCoverImage(coverImage);
 
@@ -114,14 +115,20 @@ public class PostManager implements PostService {
 
     @Transactional
     @Override
-    public void deletePost(UUID ownerId, UUID postId, UUID userId) {
+    public void deletePost(UUID ownerId, UUID postId, UUID requesterId) {
 
+        //İstemci ve hedef kullanıcıyı doğrula
         userService.getUserById(ownerId);
-        userService.getUserById(userId);
+        userService.getUserById(requesterId);
 
-        checkAuthority(ownerId, userId);
+        //İstemci ve hedef kullanıcı aynı kişi mi?
+        checkAuthority(ownerId, requesterId);
 
+        //İlgili gönderiyi bul
         PostEntity foundPost = getPostById(ownerId, postId);
+
+        //İlişkili varlıkları sil
+        softDeletePostRelationsManager.softDeletePostRelations(foundPost);
 
         foundPost.setRecordStatus(PASSIVE);
 
@@ -130,14 +137,14 @@ public class PostManager implements PostService {
 
     @Transactional
     @Override
-    public PostEntity updatePost(PostEntity requestedPost, UUID userId) {
+    public PostEntity updatePost(PostEntity requestedPost, UUID requesterId) {
 
         userService.getUserById(requestedPost.getUser().getId());
-        userService.getUserById(userId);
+        userService.getUserById(requesterId);
 
-        PostEntity foundPost = getPostById(requestedPost.getId(), userId);
+        PostEntity foundPost = getPostById(requestedPost.getId(), requesterId);
 
-        checkAuthority(requestedPost.getId(), userId);
+        checkAuthority(requestedPost.getId(), requesterId);
 
         return updateChecks(requestedPost, foundPost);
     }
@@ -148,10 +155,10 @@ public class PostManager implements PostService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public void checkAuthority(UUID ownerId, UUID userId) {
-        if (!(ownerId.equals(userId))) {
+    public void checkAuthority(UUID ownerId, UUID requesterId) {
+        if (!(ownerId.equals(requesterId))) {
             throw new UnauthorizedException(messageSource.getMessage("backend.exceptions.U006",
-                    new Object[]{userId, ownerId},
+                    new Object[]{requesterId, ownerId},
                     Locale.getDefault()));
         }
     }

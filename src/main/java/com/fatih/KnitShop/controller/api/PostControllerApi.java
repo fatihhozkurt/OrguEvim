@@ -48,18 +48,18 @@ public interface PostControllerApi {
     //Checked
     @PostMapping
     ResponseEntity<PostDetailResponse> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
-                                                  @RequestParam("userId") @NotNull UUID userId);
+                                                  @RequestParam("requesterId") @NotNull UUID requesterId);
 
     //Checked
     @DeleteMapping
     ResponseEntity<HttpStatus> deletePost(@RequestParam("ownerId") @NotNull UUID ownerId,
                                           @RequestParam("postId") @NotNull UUID postId,
-                                          @RequestParam("userId") @NotNull UUID userId);
+                                          @RequestParam("requesterId") @NotNull UUID requesterId);
 
     //Checked
     @PutMapping
     ResponseEntity<PostDetailResponse> updatePost(@Valid @RequestBody UpdatePostRequest updatePostRequest,
-                                                  @RequestParam("userId") @NotNull UUID userId);
+                                                  @RequestParam("requesterId") @NotNull UUID requesterId);
 
     @DeleteMapping(ALL)
     ResponseEntity<HttpStatus> deleteAllPosts();
