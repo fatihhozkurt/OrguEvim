@@ -16,6 +16,6 @@ public record LikeCommentRequest(
         UUID commentId,
 
         @NotNull
-        UUID userId
+        UUID requesterId
 ) {
 }

@@ -1,7 +1,6 @@
 package com.fatih.KnitShop.manager.service;
 
 import com.fatih.KnitShop.dto.request.user.UserFollowRequest;
-import com.fatih.KnitShop.dto.request.user.UserUnfollowRequest;
 import com.fatih.KnitShop.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +26,6 @@ public interface UserService {
     Page<UserEntity> getFollowersById(UUID ownerId, Pageable pageable);
 
     Page<UserEntity> getFollowingsById(UUID ownerId, Pageable pageable);
+
+    void checkUser(UUID userId);
 }

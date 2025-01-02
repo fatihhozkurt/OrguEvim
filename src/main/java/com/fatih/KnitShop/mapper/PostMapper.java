@@ -13,16 +13,16 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(uses = {ImageMapper.class, UserMapper.class, CategoryMapper.class, PostMapper.class})
+@Mapper(uses = {ImageMapper.class, UserMapper.class, CategoryMapper.class})
 public interface PostMapper {
 
     PostMapper INSTANCE = Mappers.getMapper(PostMapper.class);
 
     @Mapping(target = "postId", source = "id")
     @Mapping(target = "postTitle", source = "title")
-    @Mapping(target = "coverImage", source = "coverImage")
     @Mapping(target = "userMiniProfileResponse", source = "user")
     @Mapping(target = "categoryResponse", source = "category")
+    @Mapping(target = "coverImage", source = "coverImage")
     PostCardResponse toPostCardResponse(PostEntity postEntity);
 
     List<PostCardResponse> toPostCardResponseList(List<PostEntity> postEntities);
@@ -35,7 +35,12 @@ public interface PostMapper {
 
     List<PostSliderResponse> toPostSliderResponseList(List<PostEntity> postEntities);
 
+    @Mapping(target = "postId", source = "id")
+    @Mapping(target = "postTitle", source = "title")
+    @Mapping(target = "userMiniProfileResponse", source = "user")
     @Mapping(target = "postContent", source = "content")
+    @Mapping(target = "categoryResponse", source = "category")
+    @Mapping(target = "coverImage", source = "coverImage")
     @Mapping(target = "postImages", source = "images")
     PostDetailResponse toPostDetailResponse(PostEntity postEntity);
 

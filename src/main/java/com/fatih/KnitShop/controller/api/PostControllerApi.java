@@ -21,46 +21,47 @@ import static com.fatih.KnitShop.url.UrlConst.*;
 @RequestMapping(POST)
 public interface PostControllerApi {
 
-    //Checked
+    //CheckedX
     @GetMapping(RANDOM)
     ResponseEntity<PageImpl<PostSliderResponse>> getRandomPosts(Pageable pageable);
 
-    //Checked
+    //CheckedX
     @GetMapping(ALL)
     ResponseEntity<PageImpl<PostCardResponse>> getAllPosts(Pageable pageable);
 
-    //Checked
+    //CheckedX
     @GetMapping(ID)
     ResponseEntity<PostDetailResponse> getPostById(@RequestParam("ownerId") @NotNull UUID ownerId,
 
                                                    @RequestParam("postId") @NotNull UUID postId);
 
-    //Checked
+    //CheckedX
     @GetMapping(USER + ID)
     ResponseEntity<PageImpl<UserProfilePostCardResponse>> getPostsByUserId(@RequestParam("ownerId") @NotNull UUID ownerId,
                                                                            Pageable pageable);
 
-    //Checked
+    //CheckedX
     @GetMapping(CATEGORY + ID)
     ResponseEntity<PageImpl<PostCardResponse>> getPostsByCategoryId(@RequestParam("categoryId") @NotNull UUID categoryId,
                                                                     Pageable pageable);
 
-    //Checked
+    //CheckedX
     @PostMapping
     ResponseEntity<PostDetailResponse> createPost(@Valid @RequestBody CreatePostRequest createPostRequest,
                                                   @RequestParam("requesterId") @NotNull UUID requesterId);
 
-    //Checked
+    //CheckedX
     @DeleteMapping
     ResponseEntity<HttpStatus> deletePost(@RequestParam("ownerId") @NotNull UUID ownerId,
                                           @RequestParam("postId") @NotNull UUID postId,
                                           @RequestParam("requesterId") @NotNull UUID requesterId);
 
-    //Checked
+    //CheckedX
     @PutMapping
     ResponseEntity<PostDetailResponse> updatePost(@Valid @RequestBody UpdatePostRequest updatePostRequest,
                                                   @RequestParam("requesterId") @NotNull UUID requesterId);
 
+    //CheckedX
     @DeleteMapping(ALL)
     ResponseEntity<HttpStatus> deleteAllPosts();
 }

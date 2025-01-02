@@ -1,6 +1,7 @@
 package com.fatih.KnitShop.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fatih.KnitShop.entity.listeners.LikeListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SuperBuilder
 @Table(name = "likes")
 @SQLRestriction("record_status <> 'true'")
+@EntityListeners(LikeListener.class)
 public class LikeEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)

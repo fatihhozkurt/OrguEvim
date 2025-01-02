@@ -13,6 +13,6 @@ public record LikePostRequest(
         UUID postId,
 
         @NotNull
-        UUID userId
+        UUID requesterId
 ) {
 }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.fatih.KnitShop.url.RecordStatus.PASSIVE;
@@ -36,7 +37,7 @@ public class UserManager implements UserService {
     @Override
     public UserEntity getUserById(UUID userId) {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(messageSource
-                .getMessage("backend.exceptions.U001",
+                .getMessage("backend.exceptions.US001",
                         new Object[]{userId},
                         Locale.getDefault())));
     }
@@ -52,7 +53,7 @@ public class UserManager implements UserService {
         UserEntity following = getUserById(userFollowRequest.followingId());
 
         //Request gönderen kişi takip isteğini gönderen kişiyle aynı mı?
-        checkAuthority(userFollowRequest.followerId(), userFollowRequest.requesterId());
+        checkAuthority(userFollowRequest.requesterId(), userFollowRequest.followerId());
 
         //Takipçi zaten takip ediyor mu?
         validateFollow(follower, following);
@@ -73,7 +74,7 @@ public class UserManager implements UserService {
         UserEntity follower = getUserById(unfollowerId);
         UserEntity following = getUserById(unfollowingId);
 
-        checkAuthority(unfollowerId, requesterId);
+        checkAuthority(requesterId, unfollowerId);
 
         validateUnfollow(follower, following);
 
@@ -132,10 +133,10 @@ public class UserManager implements UserService {
         UserEntity foundUser = getUserById(requestedUser.getId());
 
         //Güncelleyecek kullanıcıyı kontrol et
-        getUserById(requesterId);
+        checkUser(requesterId);
 
         //Güncelleyecek ve güncellenecek kullanıcılar aynı kişi mi?
-        checkAuthority(requestedUser.getId(), requesterId);
+        checkAuthority(requesterId, requestedUser.getId());
 
         //Güncelleme işlemlerini yapan metot ve kaydet.
         return updateChecks(requestedUser, foundUser);
@@ -150,10 +151,10 @@ public class UserManager implements UserService {
         UserEntity foundUser = getUserById(ownerId);
 
         //Silecek kişi var mı?
-        getUserById(requesterId);
+        checkUser(requesterId);
 
         //Silinecek kişi ile silmek iseyen kişi aynı mı?
-        checkAuthority(ownerId, requesterId);
+        checkAuthority(requesterId, ownerId);
 
         //Bu adamın takip ettikleri ve takipçileri var
         List<UserEntity> followers = getFollowersById(foundUser.getId(), Pageable.unpaged()).getContent();
@@ -197,7 +198,7 @@ public class UserManager implements UserService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void validateFollow(UserEntity follower, UserEntity following) {
         if (following.getFollowers().contains(follower)) {
-            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U002",
+            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.US002",
                     new Object[]{follower.getId()},
                     Locale.getDefault()));
         }
@@ -207,7 +208,7 @@ public class UserManager implements UserService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void validateUnfollow(UserEntity follower, UserEntity following) {
         if (!(following.getFollowers().contains(follower))) {
-            throw new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.U003",
+            throw new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.US003",
                     new Object[]{follower.getId()},
                     Locale.getDefault()));
         }
@@ -234,13 +235,13 @@ public class UserManager implements UserService {
         //        }
 
         userRepository.findByUsername(username).ifPresent(user -> {
-            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U004",
+            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.US004",
                     new Object[]{username},
                     Locale.getDefault()));
         });
 
         userRepository.findByEmail(email).ifPresent(user -> {
-            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U005",
+            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.US005",
                     new Object[]{email},
                     Locale.getDefault()));
         });
@@ -281,11 +282,18 @@ public class UserManager implements UserService {
 
     //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public void checkAuthority(UUID ownerId, UUID requesterId) {
+    public void checkAuthority(UUID requesterId, UUID ownerId) {
         if (!(ownerId.equals(requesterId))) {
-            throw new UnauthorizedException(messageSource.getMessage("backend.exceptions.U006",
+            throw new UnauthorizedException(messageSource.getMessage("backend.exceptions.US006",
                     new Object[]{requesterId, ownerId},
                     Locale.getDefault()));
         }
+    }
+
+    public void checkUser(UUID userId) {
+        Optional.of(userRepository.existsById(userId)).filter(exists -> exists).orElseThrow(() ->
+                new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.US001",
+                        new Object[]{userId},
+                        Locale.getDefault())));
     }
 }

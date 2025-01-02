@@ -5,13 +5,14 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import org.springframework.stereotype.Component;
 
-import static com.fatih.KnitShop.url.RecordStatus.PASSIVE;
+import static com.fatih.KnitShop.url.RecordStatus.ACTIVE;
 
 @Component
 public class PostListener {
 
     @PrePersist
     public void prePersist(PostEntity post) {
+        post.setRecordStatus(ACTIVE);
         post.setCommentCount(0L);
         post.setLikeCount(0L);
     }

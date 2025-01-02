@@ -24,4 +24,6 @@ public interface PostService {
     PostEntity updatePost(PostEntity postEntity, UUID requesterId);
 
     void deleteAllPosts();
+
+    void checkPost(UUID postId);
 }

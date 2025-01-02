@@ -2,10 +2,10 @@ package com.fatih.KnitShop.dto.response.like;
 
 import java.util.UUID;
 
-public record LikeResponse(
+public record LikePostResponse(
 
         //Like fields
         UUID likeId,
-        Long currentLikeCount
+        Long currentPostLikeCount
 ) {
 }

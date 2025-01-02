@@ -30,6 +30,10 @@ public class CommentEntity extends BaseEntity {
     @Column(name = "reply_count", nullable = false)
     private Long replyCount;
 
+    @PositiveOrZero
+    @Column(name = "like_count", nullable = false)
+    private Long likeCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @JsonManagedReference

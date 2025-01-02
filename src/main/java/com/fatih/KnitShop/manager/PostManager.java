@@ -56,23 +56,25 @@ public class PostManager implements PostService {
     @Override
     public PostEntity getPostById(UUID ownerId, UUID postId) {
 
-        userService.getUserById(ownerId);
+        userService.checkUser(ownerId);
 
         return postRepository.findByUser_IdAndId(ownerId, postId).orElseThrow(() ->
-                new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.P001",
+                new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.PST002",
                         new Object[]{ownerId, postId},
                         Locale.getDefault())));
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public Page<PostEntity> getPostsByUserId(UUID ownerId, Pageable pageable) {
 
-        userService.getUserById(ownerId);
+        userService.checkUser(ownerId);
 
         return postRepository.findByUser_Id(ownerId, pageable);
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public Page<PostEntity> getPostsByCategoryId(UUID categoryId, Pageable pageable) {
@@ -83,86 +85,101 @@ public class PostManager implements PostService {
     }
 
 
+    //Checked
     @Transactional
     @Override
     public PostEntity createPost(PostEntity requestedPost, UUID requesterId) {
+        //İlgili user ve category'i bul
+        UserEntity foundUser = userService.getUserById(requestedPost.getUser().getId());
+        CategoryEntity foundCategory = categoryService.getCategoryById(requestedPost.getCategory().getId());
 
-        UserEntity userEntity = userService.getUserById(requestedPost.getUser().getId());
-        CategoryEntity categoryEntity = categoryService.getCategoryById(requestedPost.getCategory().getId());
+        //İki user aynı mı kontrol et
+        checkAuthority(requesterId, requestedPost.getUser().getId());
 
-        checkAuthority(requestedPost.getUser().getId(), requesterId);
-
-        PostEntity post = PostEntity.builder()
+        //Alanları tek tek setle
+        PostEntity newPost = PostEntity.builder()
                 .title(requestedPost.getTitle())
                 .content(requestedPost.getContent())
                 .ingredients(requestedPost.getIngredients())
                 .youtubeLink(requestedPost.getYoutubeLink())
-                .user(userEntity)
-                .category(categoryEntity).build();
+                .user(foundUser)
+                .category(foundCategory).build();
 
-        List<ImageEntity> postImages = requestedPost.getImages();
-        post.setImages(postImages);
-        post.setImageCount((long) postImages.size());
+        //User oluşturulurken verilmesi gereken postImages listesi ilişkili bir entity olduğu için newleyip setle
+        requestedPost.getImages().forEach(image -> image.setPost(newPost));
+        List<ImageEntity> newImages = requestedPost.getImages();
 
+        newPost.setImages(newImages);
+        newPost.setImageCount((long) newImages.size());
+
+        //Cover image aynı şekilde
         ImageEntity coverImage = requestedPost.getImages().getFirst();
-        post.setCoverImage(coverImage);
+        newPost.setCoverImage(coverImage);
 
-        userEntity.getPosts().add(post);
-        categoryEntity.getPosts().add(post);
+        //UserEntity'nin postlarına oluşturulan postu ekle
+        foundUser.getPosts().add(newPost);
+        foundUser.setPostCount((long) foundUser.getPosts().size());
 
-        return postRepository.save(post);
+        //CategoryEntity'nin postlarına oluşturulan postu ekle
+        foundCategory.getPosts().add(newPost);
+        foundCategory.setPostCount((long) foundCategory.getPosts().size());
+
+        return postRepository.save(newPost);
     }
 
+    //Checked
     @Transactional
     @Override
     public void deletePost(UUID ownerId, UUID postId, UUID requesterId) {
 
         //İstemci ve hedef kullanıcıyı doğrula
-        userService.getUserById(ownerId);
-        userService.getUserById(requesterId);
+        userService.checkUser(ownerId);
+        userService.checkUser(requesterId);
 
         //İstemci ve hedef kullanıcı aynı kişi mi?
-        checkAuthority(ownerId, requesterId);
+        checkAuthority(requesterId, ownerId);
 
         //İlgili gönderiyi bul
         PostEntity foundPost = getPostById(ownerId, postId);
 
         //İlişkili varlıkları sil
         softDeletePostRelationsManager.softDeletePostRelations(foundPost);
-
-        foundPost.setRecordStatus(PASSIVE);
-
-        postRepository.save(foundPost);
     }
 
+    //Checked
     @Transactional
     @Override
     public PostEntity updatePost(PostEntity requestedPost, UUID requesterId) {
 
-        userService.getUserById(requestedPost.getUser().getId());
-        userService.getUserById(requesterId);
+        userService.checkUser(requestedPost.getUser().getId());
+        userService.checkUser(requesterId);
 
         PostEntity foundPost = getPostById(requestedPost.getId(), requesterId);
 
-        checkAuthority(requestedPost.getId(), requesterId);
+        checkAuthority(requesterId, requestedPost.getId());
 
         return updateChecks(requestedPost, foundPost);
     }
 
+    //Checked
+    @Transactional
     @Override
     public void deleteAllPosts() {
-        postRepository.deleteAll();
+        List<PostEntity> foundPosts = postRepository.findAll();
+        foundPosts.forEach(softDeletePostRelationsManager::softDeletePostRelations);
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public void checkAuthority(UUID ownerId, UUID requesterId) {
+    public void checkAuthority(UUID requesterId, UUID ownerId) {
         if (!(ownerId.equals(requesterId))) {
-            throw new UnauthorizedException(messageSource.getMessage("backend.exceptions.U006",
+            throw new UnauthorizedException(messageSource.getMessage("backend.exceptions.PST003",
                     new Object[]{requesterId, ownerId},
                     Locale.getDefault()));
         }
     }
 
+    //Checked
     @Transactional
     public PostEntity updateChecks(PostEntity requestedPost, PostEntity foundPost) {
         if (requestedPost.getTitle() != null) {
@@ -182,7 +199,15 @@ public class PostManager implements PostService {
             List<ImageEntity> imageEntity = requestedPost.getImages();
             foundPost.setImages(imageEntity);
         }
-
         return postRepository.save(foundPost);
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Override
+    public void checkPost(UUID postId) {
+        Optional.of(postRepository.existsById(postId)).filter(exists -> exists).orElseThrow(() ->
+                new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.PST001",
+                        new Object[]{postId},
+                        Locale.getDefault())));
     }
 }
