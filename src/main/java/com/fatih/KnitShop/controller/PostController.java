@@ -85,28 +85,28 @@ public class PostController implements PostControllerApi {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> deletePost(UUID ownerId, UUID postId, UUID userId) {
+    public ResponseEntity<HttpStatus> deletePost(UUID ownerId, UUID postId, UUID requesterId) {
 
-        postService.deletePost(ownerId, postId, userId);
+        postService.deletePost(ownerId, postId, requesterId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
-    public ResponseEntity<PostDetailResponse> createPost(CreatePostRequest createPostRequest, UUID userId) {
+    public ResponseEntity<PostDetailResponse> createPost(CreatePostRequest createPostRequest, UUID requesterId) {
 
         PostEntity postEntity = PostMapper.INSTANCE.createPostRequestToEntity(createPostRequest);
-        PostEntity savedPost = postService.createPost(postEntity, userId);
+        PostEntity savedPost = postService.createPost(postEntity, requesterId);
         PostDetailResponse postDetailResponse = PostMapper.INSTANCE.toPostDetailResponse(savedPost);
 
         return new ResponseEntity<>(postDetailResponse, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<PostDetailResponse> updatePost(UpdatePostRequest updatePostRequest, UUID userId) {
+    public ResponseEntity<PostDetailResponse> updatePost(UpdatePostRequest updatePostRequest, UUID requesterId) {
 
         PostEntity postEntity = PostMapper.INSTANCE.updatePostRequestToEntity(updatePostRequest);
-        PostEntity updatedPost = postService.updatePost(postEntity, userId);
+        PostEntity updatedPost = postService.updatePost(postEntity, requesterId);
         PostDetailResponse postDetailResponse = PostMapper.INSTANCE.toPostDetailResponse(updatedPost);
 
         return new ResponseEntity<>(postDetailResponse, HttpStatus.OK);

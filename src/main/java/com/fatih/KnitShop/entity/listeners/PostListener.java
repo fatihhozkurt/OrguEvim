@@ -19,10 +19,6 @@ public class PostListener {
     @PreUpdate
     public void preUpdate(PostEntity post) {
         if (post.isRecordStatus()) {
-            post.getComments().forEach(comment -> comment.setRecordStatus(PASSIVE));
-            post.getLikes().forEach(like -> like.setRecordStatus(PASSIVE));
-            post.getImages().forEach(image -> image.setRecordStatus(PASSIVE));
-            post.getCoverImage().setRecordStatus(PASSIVE);
             post.setImageCount(0L);
             post.setCommentCount(0L);
             post.setLikeCount(0L);

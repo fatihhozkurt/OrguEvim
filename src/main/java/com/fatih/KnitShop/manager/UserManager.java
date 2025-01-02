@@ -2,7 +2,6 @@ package com.fatih.KnitShop.manager;
 
 import com.fatih.KnitShop.dto.request.user.UserFollowRequest;
 import com.fatih.KnitShop.entity.ImageEntity;
-import com.fatih.KnitShop.entity.PostEntity;
 import com.fatih.KnitShop.entity.UserEntity;
 import com.fatih.KnitShop.exception.DataAlreadyExistException;
 import com.fatih.KnitShop.exception.ResourceNotFoundException;
@@ -30,7 +29,9 @@ public class UserManager implements UserService {
 
     private final UserRepository userRepository;
     private final MessageSource messageSource;
+    private final SoftDeletePostRelationsManager softDeletePostRelationsManager;
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public UserEntity getUserById(UUID userId) {
@@ -40,6 +41,7 @@ public class UserManager implements UserService {
                         Locale.getDefault())));
     }
 
+    //Checked
     @Transactional
     @Override
     public void follow(UserFollowRequest userFollowRequest) {
@@ -49,7 +51,7 @@ public class UserManager implements UserService {
         //Takip edilecek kişi
         UserEntity following = getUserById(userFollowRequest.followingId());
 
-        //Request gönderen kişi isteği gönderen kişiyle aynı mı?
+        //Request gönderen kişi takip isteğini gönderen kişiyle aynı mı?
         checkAuthority(userFollowRequest.followerId(), userFollowRequest.requesterId());
 
         //Takipçi zaten takip ediyor mu?
@@ -64,6 +66,7 @@ public class UserManager implements UserService {
         userRepository.save(following);
     }
 
+    //Checked
     @Transactional
     @Override
     public void unfollow(UUID unfollowerId, UUID unfollowingId, UUID requesterId) {
@@ -83,6 +86,7 @@ public class UserManager implements UserService {
         userRepository.save(following);
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public List<UserEntity> getAllUsers() {
@@ -90,6 +94,7 @@ public class UserManager implements UserService {
         return userRepository.findAll();
     }
 
+    //Checked
     @Transactional
     @Override
     public UserEntity createUser(UserEntity user) {
@@ -118,6 +123,7 @@ public class UserManager implements UserService {
         return userRepository.save(foundUser);
     }
 
+    //Checked
     @Transactional
     @Override
     public UserEntity updateUser(UserEntity requestedUser, UUID requesterId) {
@@ -135,15 +141,17 @@ public class UserManager implements UserService {
         return updateChecks(requestedUser, foundUser);
     }
 
-
+    //Checked
     @Transactional
     @Override
     public void deleteUser(UUID ownerId, UUID requesterId) {
 
         //Silinecek user'ım var mı?
         UserEntity foundUser = getUserById(ownerId);
+
         //Silecek kişi var mı?
         getUserById(requesterId);
+
         //Silinecek kişi ile silmek iseyen kişi aynı mı?
         checkAuthority(ownerId, requesterId);
 
@@ -157,9 +165,7 @@ public class UserManager implements UserService {
         //Takip ettiklerinde gezip her birisini unfollow et
         followings.forEach(following -> unfollow(foundUser.getId(), following.getId(), foundUser.getId()));
 
-        List<PostEntity> posts = foundUser.getPosts();
-        posts.forEach(post -> post.setRecordStatus(PASSIVE));
-        foundUser.setPosts(posts);
+        foundUser.getPosts().forEach(softDeletePostRelationsManager::softDeletePostRelations);
 
         //Silinecek kişi silindi
         foundUser.setRecordStatus(PASSIVE);
@@ -167,6 +173,7 @@ public class UserManager implements UserService {
         userRepository.save(foundUser);
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public Page<UserEntity> getFollowersById(UUID ownerId, Pageable pageable) {
@@ -176,6 +183,7 @@ public class UserManager implements UserService {
         return new PageImpl<>(user.getFollowers(), pageable, user.getFollowers().size());
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public Page<UserEntity> getFollowingsById(UUID ownerId, Pageable pageable) {
@@ -185,6 +193,7 @@ public class UserManager implements UserService {
         return new PageImpl<>(user.getFollowing(), pageable, user.getFollowing().size());
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void validateFollow(UserEntity follower, UserEntity following) {
         if (following.getFollowers().contains(follower)) {
@@ -194,6 +203,7 @@ public class UserManager implements UserService {
         }
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void validateUnfollow(UserEntity follower, UserEntity following) {
         if (!(following.getFollowers().contains(follower))) {
@@ -203,23 +213,25 @@ public class UserManager implements UserService {
         }
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void updateFollowCounts(UserEntity follower, UserEntity following) {
         following.setFollowersCount((long) following.getFollowers().size());
         follower.setFollowingCount((long) follower.getFollowing().size());
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void validateUserEmailAndUsername(String username, String email) {
-//        if (userRepository.existsUserEntityByUsername(username)) {
-//            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U004",
-//                    new Object[]{username},
-//                    Locale.getDefault()));
-//        } else if (userRepository.existsUserEntityByEmail(email)) {
-//            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U005",
-//                    new Object[]{email},
-//                    Locale.getDefault()));
-//        }
+        //        if (userRepository.existsUserEntityByUsername(username)) {
+        //            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U004",
+        //                    new Object[]{username},
+        //                    Locale.getDefault()));
+        //        } else if (userRepository.existsUserEntityByEmail(email)) {
+        //            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U005",
+        //                    new Object[]{email},
+        //                    Locale.getDefault()));
+        //        }
 
         userRepository.findByUsername(username).ifPresent(user -> {
             throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.U004",
@@ -234,23 +246,23 @@ public class UserManager implements UserService {
         });
     }
 
-
+    //Checked
     @Transactional
     public UserEntity updateChecks(UserEntity requestedUser, UserEntity foundUser) {
         if (requestedUser.getUsername() != null || requestedUser.getEmail() != null) {
             validateUserEmailAndUsername(requestedUser.getUsername(), requestedUser.getEmail());
+            if (requestedUser.getUsername() != null) {
+                foundUser.setUsername(requestedUser.getUsername().toLowerCase(Locale.ROOT));
+            }
+            if (requestedUser.getEmail() != null) {
+                foundUser.setEmail(requestedUser.getEmail());
+            }
         }
         if (requestedUser.getName() != null) {
             foundUser.setName(requestedUser.getName());
         }
         if (requestedUser.getSurname() != null) {
             foundUser.setSurname(requestedUser.getSurname());
-        }
-        if (requestedUser.getUsername() != null) {
-            foundUser.setUsername(requestedUser.getUsername().toLowerCase(Locale.ROOT));
-        }
-        if (requestedUser.getEmail() != null) {
-            foundUser.setEmail(requestedUser.getEmail());
         }
         if (requestedUser.getPassword() != null) {
             foundUser.setPassword(requestedUser.getPassword().toLowerCase(Locale.ROOT));
@@ -267,6 +279,7 @@ public class UserManager implements UserService {
         return userRepository.save(foundUser);
     }
 
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void checkAuthority(UUID ownerId, UUID requesterId) {
         if (!(ownerId.equals(requesterId))) {
