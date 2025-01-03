@@ -16,6 +16,6 @@ public record UnlikePostRequest(
         UUID likeId,
 
         @NotNull
-        UUID userId
+        UUID requesterId
 ) {
 }

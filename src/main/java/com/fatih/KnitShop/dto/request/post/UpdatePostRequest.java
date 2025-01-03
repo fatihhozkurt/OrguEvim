@@ -9,6 +9,12 @@ import java.util.UUID;
 
 public record UpdatePostRequest(
 
+        @NotNull
+        UUID postId,
+
+        @NotNull
+        UUID ownerId,
+
         @OptionalFieldValidation(notBlank = true, min = 20, max = 2000)
         String postTitle,
 
@@ -22,12 +28,6 @@ public record UpdatePostRequest(
         String youtubeLink,
 
         @OptionalFieldValidation(min = 1)
-        List<UploadImageRequest> postImages,
-
-        @NotNull
-        UUID postId,
-
-        @NotNull
-        UUID ownerId
+        List<UploadImageRequest> postImages
 ) {
 }

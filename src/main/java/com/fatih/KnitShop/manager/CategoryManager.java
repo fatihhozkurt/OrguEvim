@@ -43,7 +43,7 @@ public class CategoryManager implements CategoryService {
     public CategoryEntity getCategoryById(UUID categoryId) {
 
         return categoryRepository.findById(categoryId).orElseThrow(() ->
-                new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.C001",
+                new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.CAT001",
                         new Object[]{categoryId},
                         Locale.getDefault())));
     }
@@ -88,7 +88,7 @@ public class CategoryManager implements CategoryService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void checkCategoryName(String categoryName) {
         if (categoryRepository.findByCategoryName(categoryName.toLowerCase(Locale.ROOT)).isPresent()) {
-            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.C002",
+            throw new DataAlreadyExistException(messageSource.getMessage("backend.exceptions.CAT002",
                     new Object[]{categoryName},
                     Locale.getDefault()));
         }

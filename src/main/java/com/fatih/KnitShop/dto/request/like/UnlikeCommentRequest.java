@@ -19,6 +19,6 @@ public record UnlikeCommentRequest(
         UUID likeId,
 
         @NotNull
-        UUID userId
+        UUID requesterId
 ) {
 }
