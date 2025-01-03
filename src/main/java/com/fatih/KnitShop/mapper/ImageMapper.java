@@ -18,11 +18,15 @@ public interface ImageMapper {
     //Checked
     @Mapping(target = "imageId", source = "id")
     ImageResponse toImageResponse(ImageEntity imageEntity);
+
     //Checked
     List<ImageResponse> toImageResponseList(List<ImageEntity> imageEntities);
 
     //Checked
     ImageEntity UploadImageRequestToEntity(UploadImageRequest uploadImageRequest);
+
+    //Checked
+    List<ImageEntity> UploadImageRequestToEntityList(List<UploadImageRequest> uploadImageRequests);
 
     //Checked
     ImageEntity UpdateImageRequestToEntity(UpdateImageRequest updateImageRequest);

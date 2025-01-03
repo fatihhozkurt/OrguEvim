@@ -18,14 +18,16 @@ public interface ImageControllerApi {
 
 
     @PostMapping
-    ResponseEntity<ImageResponse> uploadImage(@Valid @RequestBody List<UploadImageRequest> uploadImageRequest);
+    ResponseEntity<List<ImageResponse>> uploadImage(@Valid @RequestBody List<UploadImageRequest> uploadImageRequest);
 
+    //Checked
     @GetMapping(ALL)
     ResponseEntity<List<ImageResponse>> getAllImages();
 
     //    @GetMapping(DOWNLOAD)
     //    ResponseEntity<ImageResponse> downloadImage(@RequestParam("imageId") @NotNull UUID imageId);
 
+    //Checked
     @GetMapping(ID)
     ResponseEntity<ImageResponse> getImageById(@RequestParam("imageId") @NotNull UUID imageId);
 
