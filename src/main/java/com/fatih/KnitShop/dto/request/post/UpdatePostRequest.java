@@ -1,7 +1,8 @@
 package com.fatih.KnitShop.dto.request.post;
 
 import com.fatih.KnitShop.annotation.OptionalFieldValidation;
-import com.fatih.KnitShop.dto.request.image.UploadImageRequest;
+import com.fatih.KnitShop.dto.request.image.UpdateImageRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public record UpdatePostRequest(
         @OptionalFieldValidation(notBlank = true, min = 5, max = 100)
         String youtubeLink,
 
-        @OptionalFieldValidation(min = 1)
-        List<UploadImageRequest> postImages
+        @Valid
+        List<UpdateImageRequest> postImages
 ) {
 }

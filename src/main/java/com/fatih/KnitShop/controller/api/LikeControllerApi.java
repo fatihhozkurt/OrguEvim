@@ -39,7 +39,8 @@ public interface LikeControllerApi {
     //Checked
     @GetMapping(POST + ID)
     ResponseEntity<PageImpl<UserMiniProfileResponse>> getLikesByPostId(@RequestParam("ownerId") @NotNull UUID ownerId,
-                                                                       @RequestParam("postId") @NotNull UUID postId, Pageable pageable);
+                                                                       @RequestParam("postId") @NotNull UUID postId,
+                                                                       Pageable pageable);
 
     //Checked
     @GetMapping(COMMENT + ID)

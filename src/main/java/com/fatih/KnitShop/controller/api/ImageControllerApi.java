@@ -16,7 +16,7 @@ import static com.fatih.KnitShop.url.UrlConst.*;
 @RequestMapping(IMAGE)
 public interface ImageControllerApi {
 
-
+    //Checked
     @PostMapping
     ResponseEntity<List<ImageResponse>> uploadImage(@Valid @RequestBody List<UploadImageRequest> uploadImageRequest);
 
@@ -31,6 +31,7 @@ public interface ImageControllerApi {
     @GetMapping(ID)
     ResponseEntity<ImageResponse> getImageById(@RequestParam("imageId") @NotNull UUID imageId);
 
+    //Checked
     @DeleteMapping
     ResponseEntity<HttpStatus> deleteImageById(@RequestParam("imageId") @NotNull UUID imageId);
 }

@@ -41,7 +41,7 @@ public class LikeManager implements LikeService {
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public LikeEntity getPostLikeById(UUID ownerId, UUID postId, UUID likeId) {
-        return likeRepository.findByUser_IdAndPost_IdAndId(ownerId, postId, likeId).orElseThrow(() ->
+        return likeRepository.findByPost_User_IdAndPost_IdAndId(ownerId, postId, likeId).orElseThrow(() ->
                 new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.LK003",
                         new Object[]{ownerId, postId, likeId},
                         Locale.getDefault())
@@ -50,7 +50,7 @@ public class LikeManager implements LikeService {
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public LikeEntity getCommentLikeById(UUID ownerId, UUID postId, UUID commentId, UUID likeId) {
-        return likeRepository.findByUser_IdAndPost_IdAndComment_IdAndId(ownerId, postId, commentId, likeId)
+        return likeRepository.findByPost_User_IdAndPost_IdAndComment_IdAndId(ownerId, postId, commentId, likeId)
                 .orElseThrow(() -> new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.LK004",
                         new Object[]{ownerId, postId, commentId, likeId},
                         Locale.getDefault())));
@@ -63,7 +63,7 @@ public class LikeManager implements LikeService {
         userService.checkUser(ownerId);
         postService.checkPost(postId);
 
-        Page<LikeEntity> foundLikes = likeRepository.findAllByUser_IdAndPost_Id(ownerId, postId, pageable);
+        Page<LikeEntity> foundLikes = likeRepository.findAllByPost_User_IdAndPost_Id(ownerId, postId, pageable);
         List<UserEntity> foundUsers = foundLikes.getContent().stream().map(LikeEntity::getUser).toList();
         return new PageImpl<>(foundUsers, pageable, foundLikes.getTotalElements());
     }
@@ -77,7 +77,7 @@ public class LikeManager implements LikeService {
         commentService.checkComment(commentId);
 
         Page<LikeEntity> foundLikes =
-                likeRepository.findAllByUser_IdAndPost_IdAndComment_Id(ownerId, postId, commentId, pageable);
+                likeRepository.findAllByPost_User_IdAndPost_IdAndComment_Id(ownerId, postId, commentId, pageable);
 
         List<UserEntity> foundUsers = foundLikes.getContent().stream().map(LikeEntity::getUser).toList();
         return new PageImpl<>(foundUsers, pageable, foundLikes.getTotalElements());
@@ -121,15 +121,15 @@ public class LikeManager implements LikeService {
         postService.checkPost(postId);
         userService.checkUser(requesterId);
 
-        checkAuthority(ownerId, requesterId);
+        LikeEntity foundLike = getPostLikeById(ownerId, postId, likeId);
 
-        LikeEntity likeEntity = getPostLikeById(ownerId, postId, likeId);
+        checkAuthority(foundLike.getUser().getId(), requesterId);
 
-        likeEntity.setRecordStatus(PASSIVE);
+        foundLike.setRecordStatus(PASSIVE);
 
-        likeEntity.getPost().setLikeCount(likeEntity.getPost().getLikeCount() - 1);
+        foundLike.getPost().setLikeCount(foundLike.getPost().getLikeCount() - 1);
 
-        return likeRepository.save(likeEntity);
+        return likeRepository.save(foundLike);
     }
 
     @Transactional
@@ -144,14 +144,16 @@ public class LikeManager implements LikeService {
         commentService.checkComment(commentId);
         //Comment'i beğenmek isteyen kullanıcı
         UserEntity foundUser = userService.getUserById(requesterId);
-
+        //Beğenilecek yorum
         CommentEntity foundComment = commentService.getCommentById(ownerId, postId, commentId);
 
+        //Bu yorum daha önce beğenilmiş mi?
         validateCommentLikes(foundComment, requesterId);
 
         LikeEntity newLike = LikeEntity.builder()
                 .comment(foundComment)
-                .user(foundUser).build();
+                .user(foundUser)
+                .post(foundComment.getPost()).build();
 
         foundComment.getLikes().add(newLike);
         foundComment.setLikeCount((long) foundComment.getLikes().size());
@@ -168,9 +170,11 @@ public class LikeManager implements LikeService {
         commentService.checkComment(commentId);
         userService.checkUser(requesterId);
 
-        checkAuthority(ownerId, requesterId);
-
         LikeEntity foundLike = getCommentLikeById(ownerId, postId, commentId, likeId);
+
+        checkAuthority(foundLike.getUser().getId(), requesterId);
+
+        checkAuthority(foundLike.getUser().getId(), requesterId);
 
         foundLike.getComment().setLikeCount(foundLike.getComment().getLikeCount() - 1);
 

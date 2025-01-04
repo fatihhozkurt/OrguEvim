@@ -42,7 +42,7 @@ public interface PostControllerApi {
 
     //CheckedX
     @GetMapping(CATEGORY + ID)
-    ResponseEntity<PageImpl<PostCardResponse>> getPostsByCategoryId(@RequestParam("categoryId") @NotNull UUID categoryId,
+        ResponseEntity<PageImpl<PostCardResponse>> getPostsByCategoryId(@RequestParam("categoryId") @NotNull UUID categoryId,
                                                                     Pageable pageable);
 
     //CheckedX
@@ -60,8 +60,4 @@ public interface PostControllerApi {
     @PutMapping
     ResponseEntity<PostDetailResponse> updatePost(@Valid @RequestBody UpdatePostRequest updatePostRequest,
                                                   @RequestParam("requesterId") @NotNull UUID requesterId);
-
-    //CheckedX
-    @DeleteMapping(ALL)
-    ResponseEntity<HttpStatus> deleteAllPosts();
 }

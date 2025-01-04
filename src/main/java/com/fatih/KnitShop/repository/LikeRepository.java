@@ -15,11 +15,11 @@ import java.util.UUID;
 public interface LikeRepository extends JpaRepository<LikeEntity, UUID> {
     List<LikeEntity> post(PostEntity post);
 
-    Page<LikeEntity> findAllByUser_IdAndPost_Id(UUID ownerId, UUID postId, Pageable pageable);
+    Page<LikeEntity> findAllByPost_User_IdAndPost_Id(UUID ownerId, UUID postId, Pageable pageable);
 
-    Page<LikeEntity> findAllByUser_IdAndPost_IdAndComment_Id(UUID ownerId, UUID postId, UUID commentId, Pageable pageable);
+    Page<LikeEntity> findAllByPost_User_IdAndPost_IdAndComment_Id(UUID ownerId, UUID postId, UUID commentId, Pageable pageable);
 
-    Optional<LikeEntity> findByUser_IdAndPost_IdAndId(UUID ownerId, UUID postId, UUID likeId);
+    Optional<LikeEntity> findByPost_User_IdAndPost_IdAndId(UUID ownerId, UUID postId, UUID likeId);
 
-    Optional<LikeEntity> findByUser_IdAndPost_IdAndComment_IdAndId(UUID ownerId, UUID postId, UUID commentId, UUID likeId);
+    Optional<LikeEntity> findByPost_User_IdAndPost_IdAndComment_IdAndId(UUID ownerId, UUID postId, UUID commentId, UUID likeId);
 }

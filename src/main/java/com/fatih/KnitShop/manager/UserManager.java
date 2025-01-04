@@ -10,9 +10,7 @@ import com.fatih.KnitShop.manager.service.UserService;
 import com.fatih.KnitShop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,8 +155,8 @@ public class UserManager implements UserService {
         checkAuthority(requesterId, ownerId);
 
         //Bu adamın takip ettikleri ve takipçileri var
-        List<UserEntity> followers = getFollowersById(foundUser.getId(), Pageable.unpaged()).getContent();
-        List<UserEntity> followings = getFollowingsById(foundUser.getId(), Pageable.unpaged()).getContent();
+        List<UserEntity> followers = getFollowersById(foundUser.getId(), createUnpagedPageable()).getContent();
+        List<UserEntity> followings = getFollowingsById(foundUser.getId(), createUnpagedPageable()).getContent();
 
         //Takipçilerinde gezip her birisi için bu adamı unfollow ettir.
         followers.forEach(follower -> unfollow(follower.getId(), foundUser.getId(), follower.getId()));
@@ -180,8 +178,11 @@ public class UserManager implements UserService {
     public Page<UserEntity> getFollowersById(UUID ownerId, Pageable pageable) {
 
         UserEntity user = getUserById(ownerId);
+        List<UserEntity> followers = user.getFollowers();
 
-        return new PageImpl<>(user.getFollowers(), pageable, user.getFollowers().size());
+        List<UserEntity> content = followers.subList(0, Math.min(followers.size(), pageable.getPageSize()));
+
+        return new PageImpl<>(content, pageable, content.size());
     }
 
     //Checked
@@ -190,8 +191,10 @@ public class UserManager implements UserService {
     public Page<UserEntity> getFollowingsById(UUID ownerId, Pageable pageable) {
 
         UserEntity user = getUserById(ownerId);
+        List<UserEntity> followings = user.getFollowing();
+        List<UserEntity> content = followings.subList(0, Math.min(followings.size(), pageable.getPageSize()));
 
-        return new PageImpl<>(user.getFollowing(), pageable, user.getFollowing().size());
+        return new PageImpl<>(content, pageable, content.size());
     }
 
     //Checked
@@ -271,7 +274,7 @@ public class UserManager implements UserService {
         if (requestedUser.getBiography() != null) {
             foundUser.setBiography(requestedUser.getBiography());
         }
-        if (requestedUser.getAvatarImage().getImagePath() != null) {
+        if (requestedUser.getAvatarImage() != null && requestedUser.getAvatarImage().getImagePath() != null) {
             foundUser.getAvatarImage().setRecordStatus(PASSIVE);
             ImageEntity newAvatarImage = requestedUser.getAvatarImage();
             foundUser.setAvatarImage(newAvatarImage);
@@ -290,10 +293,15 @@ public class UserManager implements UserService {
         }
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public void checkUser(UUID userId) {
         Optional.of(userRepository.existsById(userId)).filter(exists -> exists).orElseThrow(() ->
                 new ResourceNotFoundException(messageSource.getMessage("backend.exceptions.US001",
                         new Object[]{userId},
                         Locale.getDefault())));
+    }
+
+    public Pageable createUnpagedPageable() {
+        return PageRequest.of(0, Integer.MAX_VALUE, Sort.unsorted());
     }
 }

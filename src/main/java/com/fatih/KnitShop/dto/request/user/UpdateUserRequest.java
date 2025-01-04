@@ -18,7 +18,7 @@ public record UpdateUserRequest(
         @OptionalFieldValidation(notBlank = true, min = 2, max = 50)
         String surname,
 
-        @OptionalFieldValidation(notBlank = true, min = 5, max = 33, pattern = "^[a-z0-9]+$")
+        @OptionalFieldValidation(notBlank = true, min = 5, max = 33, pattern = "^[a-z0-9_.]+$")
         String username,
 
         @OptionalFieldValidation(notBlank = true, min = 13, max = 345, pattern = "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")

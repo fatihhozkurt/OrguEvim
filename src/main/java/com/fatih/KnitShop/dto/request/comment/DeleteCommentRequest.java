@@ -16,6 +16,6 @@ public record DeleteCommentRequest(
         UUID commentId,
 
         @NotNull
-        UUID userId
+        UUID requesterId
 ) {
 }

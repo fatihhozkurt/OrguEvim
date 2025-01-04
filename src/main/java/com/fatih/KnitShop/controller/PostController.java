@@ -56,7 +56,7 @@ public class PostController implements PostControllerApi {
         PostEntity postEntity = postService.getPostById(ownerId, postId);
         PostDetailResponse postDetailResponse = PostMapper.INSTANCE.toPostDetailResponse(postEntity);
 
-        return new ResponseEntity<>(postDetailResponse, HttpStatus.OK);
+        return new ResponseEntity<>(postDetailResponse, HttpStatus.FOUND);
     }
 
     @Override
@@ -110,11 +110,5 @@ public class PostController implements PostControllerApi {
         PostDetailResponse postDetailResponse = PostMapper.INSTANCE.toPostDetailResponse(updatedPost);
 
         return new ResponseEntity<>(postDetailResponse, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<HttpStatus> deleteAllPosts() {
-        postService.deleteAllPosts();
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
