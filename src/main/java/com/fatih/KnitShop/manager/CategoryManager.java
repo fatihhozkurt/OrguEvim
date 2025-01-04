@@ -78,7 +78,7 @@ public class CategoryManager implements CategoryService {
 
         if (category.getCategoryName() != null) {
             checkCategoryName(category.getCategoryName());
-            foundCategory.setCategoryName(category.getCategoryName());
+            foundCategory.setCategoryName(category.getCategoryName().toLowerCase(Locale.ROOT));
         }
 
         return categoryRepository.save(foundCategory);

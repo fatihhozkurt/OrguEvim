@@ -4,7 +4,6 @@ import com.fatih.KnitShop.entity.PostEntity;
 import com.fatih.KnitShop.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.fatih.KnitShop.url.RecordStatus.PASSIVE;
@@ -16,7 +15,7 @@ public class SoftDeletePostRelationsManager {
     private final PostRepository postRepository;
 
     //Checked
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Transactional
     public void softDeletePostRelations(PostEntity post) {
         post.getLikes().forEach(like -> like.setRecordStatus(PASSIVE));
         post.getComments().forEach(comment -> comment.setRecordStatus(PASSIVE));

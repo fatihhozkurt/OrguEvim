@@ -30,4 +30,6 @@ public interface ImageMapper {
 
     //Checked
     ImageEntity UpdateImageRequestToEntity(UpdateImageRequest updateImageRequest);
+
+    List<ImageEntity> UpdateImageRequestToEntityList(List<UpdateImageRequest> updateImageRequests);
 }

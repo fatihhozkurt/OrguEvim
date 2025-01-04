@@ -60,11 +60,11 @@ public interface PostMapper {
     @Mapping(target = "user.id", source = "ownerId")
     PostEntity createPostRequestToEntity(CreatePostRequest createPostRequest);
 
+    @Mapping(target = "id", source = "postId")
+    @Mapping(target = "user.id", source = "ownerId")
     @Mapping(target = "title", source = "postTitle")
     @Mapping(target = "ingredients", source = "postIngredients")
     @Mapping(target = "content", source = "postContent")
     @Mapping(target = "images", source = "postImages")
-    @Mapping(target = "id", source = "postId")
-    @Mapping(target = "user.id", source = "ownerId")
     PostEntity updatePostRequestToEntity(UpdatePostRequest updatePostRequest);
 }

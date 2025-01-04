@@ -154,19 +154,11 @@ public class PostManager implements PostService {
         userService.checkUser(requestedPost.getUser().getId());
         userService.checkUser(requesterId);
 
-        PostEntity foundPost = getPostById(requestedPost.getId(), requesterId);
+        PostEntity foundPost = getPostById(requesterId, requestedPost.getId());
 
-        checkAuthority(requesterId, requestedPost.getId());
+        checkAuthority(requesterId, requestedPost.getUser().getId());
 
         return updateChecks(requestedPost, foundPost);
-    }
-
-    //Checked
-    @Transactional
-    @Override
-    public void deleteAllPosts() {
-        List<PostEntity> foundPosts = postRepository.findAll();
-        foundPosts.forEach(softDeletePostRelationsManager::softDeletePostRelations);
     }
 
     //Checked
@@ -194,10 +186,15 @@ public class PostManager implements PostService {
         if (requestedPost.getYoutubeLink() != null) {
             foundPost.setYoutubeLink(requestedPost.getYoutubeLink());
         }
+        //JPA orphan removel sebebiyle eski setImages() ile atamadan önceki eski listeyi silmeye çalışıyor.
         if (requestedPost.getImages() != null) {
-            foundPost.getImages().forEach(image -> image.setRecordStatus(PASSIVE));
-            List<ImageEntity> imageEntity = requestedPost.getImages();
-            foundPost.setImages(imageEntity);
+            List<ImageEntity> foundImages = foundPost.getImages();
+            foundImages.forEach(image -> image.setRecordStatus(PASSIVE));
+            List<ImageEntity> newImages = requestedPost.getImages();
+            newImages.forEach(image -> image.setPost(foundPost));
+            foundPost.setImages(newImages);
+            foundPost.setImageCount((long) foundImages.size());
+            foundPost.setCoverImage(foundPost.getImages().getFirst());
         }
         return postRepository.save(foundPost);
     }

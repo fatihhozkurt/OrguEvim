@@ -19,6 +19,6 @@ public record DeleteReplyRequest(
         UUID replyId,
 
         @NotNull
-        UUID userId
+        UUID requesterId
 ) {
 }

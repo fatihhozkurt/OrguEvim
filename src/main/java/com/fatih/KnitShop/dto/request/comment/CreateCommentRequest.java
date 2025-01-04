@@ -16,10 +16,10 @@ public record CreateCommentRequest(
 
         @NotNull
         @NotBlank
-        @Size(min = 100, max = 2200)
+        @Size(min = 1, max = 2200)
         String content,
 
         @NotNull
-        UUID userId
+        UUID requesterId
 ) {
 }

@@ -2,6 +2,7 @@ package com.fatih.KnitShop.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fatih.KnitShop.entity.listeners.CommentListener;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 @SuperBuilder
 @Table(name = "comments")
 @SQLRestriction("record_status <> 'true'")
+@EntityListeners(CommentListener.class)
 public class CommentEntity extends BaseEntity {
 
     @Column(name = "content", length = 2200, nullable = false, columnDefinition = "TEXT")

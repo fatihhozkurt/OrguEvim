@@ -61,7 +61,7 @@ public class PostEntity extends BaseEntity {
     @JsonBackReference
     private List<LikeEntity> likes;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<ImageEntity> images;
 
