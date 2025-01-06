@@ -1,10 +1,7 @@
 package com.fatih.KnitShop.controller.api;
 
 import com.fatih.KnitShop.dto.request.like.*;
-import com.fatih.KnitShop.dto.response.like.LikeCommentResponse;
-import com.fatih.KnitShop.dto.response.like.LikePostResponse;
-import com.fatih.KnitShop.dto.response.like.UnlikeCommentResponse;
-import com.fatih.KnitShop.dto.response.like.UnlikePostResponse;
+import com.fatih.KnitShop.dto.response.like.*;
 import com.fatih.KnitShop.dto.response.user.UserMiniProfileResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +32,13 @@ public interface LikeControllerApi {
     //Checked
     @DeleteMapping(COMMENT)
     ResponseEntity<UnlikeCommentResponse> unlikeComment(@Valid @RequestBody UnlikeCommentRequest unlikeCommentRequest);
+
+    @PostMapping(REPLY)
+    ResponseEntity<LikeReplyResponse> likeReply(@Valid @RequestBody LikeReplyRequest likeReplyRequest);
+
+    @DeleteMapping(REPLY)
+    ResponseEntity<UnlikeReplyResponse> unlikeReply(@Valid @RequestBody UnlikeReplyRequest unlikeReplyRequest);
+
 
     //Checked
     @GetMapping(POST + ID)

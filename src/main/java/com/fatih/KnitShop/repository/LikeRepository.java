@@ -17,9 +17,15 @@ public interface LikeRepository extends JpaRepository<LikeEntity, UUID> {
 
     Page<LikeEntity> findAllByPost_User_IdAndPost_Id(UUID ownerId, UUID postId, Pageable pageable);
 
-    Page<LikeEntity> findAllByPost_User_IdAndPost_IdAndComment_Id(UUID ownerId, UUID postId, UUID commentId, Pageable pageable);
+    Page<LikeEntity> findAllByPost_User_IdAndPost_IdAndComment_Id(UUID ownerId,
+                                                                  UUID postId,
+                                                                  UUID commentId,
+                                                                  Pageable pageable);
 
     Optional<LikeEntity> findByPost_User_IdAndPost_IdAndId(UUID ownerId, UUID postId, UUID likeId);
 
-    Optional<LikeEntity> findByPost_User_IdAndPost_IdAndComment_IdAndId(UUID ownerId, UUID postId, UUID commentId, UUID likeId);
+    Optional<LikeEntity> findByPost_User_IdAndPost_IdAndComment_IdAndId(UUID ownerId,
+                                                                        UUID postId,
+                                                                        UUID commentId,
+                                                                        UUID likeId);
 }

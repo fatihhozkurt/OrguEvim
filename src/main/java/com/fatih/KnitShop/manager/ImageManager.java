@@ -47,9 +47,9 @@ public class ImageManager implements ImageService {
 
     @Transactional
     @Override
-    public void deleteImage() {
-        List<ImageEntity> foundImages = imageRepository.findAll();
-        foundImages.forEach(image -> image.setRecordStatus(PASSIVE));
-        imageRepository.saveAll(foundImages);
+    public void deleteImage(UUID imageId) {
+        ImageEntity foundImage = getImageById(imageId);
+        foundImage.setRecordStatus(PASSIVE);
+        imageRepository.save(foundImage);
     }
 }

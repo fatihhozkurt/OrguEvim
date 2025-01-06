@@ -2,10 +2,7 @@ package com.fatih.KnitShop.controller;
 
 import com.fatih.KnitShop.controller.api.LikeControllerApi;
 import com.fatih.KnitShop.dto.request.like.*;
-import com.fatih.KnitShop.dto.response.like.LikeCommentResponse;
-import com.fatih.KnitShop.dto.response.like.LikePostResponse;
-import com.fatih.KnitShop.dto.response.like.UnlikeCommentResponse;
-import com.fatih.KnitShop.dto.response.like.UnlikePostResponse;
+import com.fatih.KnitShop.dto.response.like.*;
 import com.fatih.KnitShop.dto.response.user.UserMiniProfileResponse;
 import com.fatih.KnitShop.entity.LikeEntity;
 import com.fatih.KnitShop.entity.UserEntity;
@@ -78,6 +75,37 @@ public class LikeController implements LikeControllerApi {
         UnlikeCommentResponse unlikeCommentResponse = LikeMapper.INSTANCE.toUnlikeCommentResponse(deletedLike);
 
         return new ResponseEntity<>(unlikeCommentResponse, HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<LikeReplyResponse> likeReply(LikeReplyRequest likeReplyRequest) {
+
+        LikeEntity savedLike = likeService.likeReply(
+                likeReplyRequest.ownerId(),
+                likeReplyRequest.postId(),
+                likeReplyRequest.commentId(),
+                likeReplyRequest.replyId(),
+                likeReplyRequest.requesterId());
+
+        LikeReplyResponse likeReplyResponse = LikeMapper.INSTANCE.toLikeReplyResponse(savedLike);
+
+        return new ResponseEntity<>(likeReplyResponse, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<UnlikeReplyResponse> unlikeReply(UnlikeReplyRequest unlikeReplyRequest) {
+
+        LikeEntity removedLike = likeService.unlikeReply(
+                unlikeReplyRequest.ownerId(),
+                unlikeReplyRequest.postId(),
+                unlikeReplyRequest.commentId(),
+                unlikeReplyRequest.replyId(),
+                unlikeReplyRequest.likeId(),
+                unlikeReplyRequest.requesterId());
+
+        UnlikeReplyResponse unlikeReplyResponse = LikeMapper.INSTANCE.toUnlikeReplyResponse(removedLike);
+
+        return new ResponseEntity<>(unlikeReplyResponse, HttpStatus.NO_CONTENT);
     }
 
     @Override

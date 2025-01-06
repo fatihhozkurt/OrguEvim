@@ -12,5 +12,5 @@ public interface ImageService {
 
     List<ImageEntity> uploadImage(List<ImageEntity> imageEntities);
 
-    void deleteImage();
+    void deleteImage(UUID imageId);
 }

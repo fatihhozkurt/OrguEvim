@@ -27,4 +27,8 @@ public interface CommentService {
     void deleteComment(UUID ownerId, UUID postId, UUID commentId, UUID requesterId);
 
     void deleteReply(UUID ownerId, UUID postId, UUID commentId, UUID replyId, UUID requesterId);
+
+    void softDeleteComment(CommentEntity foundComment);
+
+    void softDeleteReply(CommentEntity foundReply);
 }

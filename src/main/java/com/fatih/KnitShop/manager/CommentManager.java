@@ -159,12 +159,7 @@ public class CommentManager implements CommentService {
 
         checkAuthority(foundComment.getUser().getId(), requesterId);
 
-        foundComment.getLikes().forEach(like -> like.setRecordStatus(PASSIVE));
-        foundComment.getPost().setCommentCount(foundComment.getPost().getCommentCount() - 1);
-        foundComment.getSubComments().forEach(reply -> reply.setRecordStatus(PASSIVE));
-        foundComment.getPost().setCommentCount(foundComment.getPost().getCommentCount() - 1);
-
-        foundComment.setRecordStatus(PASSIVE);
+        softDeleteComment(foundComment);
 
         commentRepository.save(foundComment);
     }
@@ -182,10 +177,7 @@ public class CommentManager implements CommentService {
 
         checkAuthority(foundReply.getUser().getId(), requesterId);
 
-        foundReply.getLikes().forEach(like -> like.setRecordStatus(PASSIVE));
-        foundReply.getSupComment().setReplyCount(foundReply.getSupComment().getReplyCount() - 1);
-
-        foundReply.setRecordStatus(PASSIVE);
+        softDeleteReply(foundReply);
 
         commentRepository.save(foundReply);
     }
@@ -206,5 +198,28 @@ public class CommentManager implements CommentService {
                     new Object[]{},
                     Locale.getDefault()));
         }
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Override
+    public void softDeleteComment(CommentEntity foundComment) {
+        if (foundComment.getLikes() != null) {
+            foundComment.getLikes().forEach(like -> like.setRecordStatus(PASSIVE));
+        }
+        if (foundComment.getSubComments() != null) {
+            foundComment.getSubComments().forEach(this::softDeleteReply);
+        }
+        foundComment.getPost().setCommentCount(foundComment.getPost().getCommentCount() - 1);
+
+        foundComment.setRecordStatus(PASSIVE);
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Override
+    public void softDeleteReply(CommentEntity foundReply) {
+        foundReply.getLikes().forEach(like -> like.setRecordStatus(PASSIVE));
+        foundReply.getSupComment().setReplyCount(foundReply.getSupComment().getReplyCount() - 1);
+
+        foundReply.setRecordStatus(PASSIVE);
     }
 }

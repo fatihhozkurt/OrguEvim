@@ -59,7 +59,8 @@ public class CommentController implements CommentControllerApi {
     @Override
     public ResponseEntity<HttpStatus> deleteComment(DeleteCommentRequest deleteCommentRequest) {
 
-        commentService.deleteComment(deleteCommentRequest.ownerId(),
+        commentService.deleteComment(
+                deleteCommentRequest.ownerId(),
                 deleteCommentRequest.postId(),
                 deleteCommentRequest.commentId(),
                 deleteCommentRequest.requesterId());
