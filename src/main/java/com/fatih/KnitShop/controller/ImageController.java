@@ -52,7 +52,7 @@ public class ImageController implements ImageControllerApi {
     @Override
     public ResponseEntity<HttpStatus> deleteImageById(UUID imageId) {
 
-        imageService.deleteImage();
+        imageService.deleteImage(imageId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

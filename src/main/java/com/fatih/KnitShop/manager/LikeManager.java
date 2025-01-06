@@ -12,7 +12,6 @@ import com.fatih.KnitShop.manager.service.LikeService;
 import com.fatih.KnitShop.manager.service.PostService;
 import com.fatih.KnitShop.manager.service.UserService;
 import com.fatih.KnitShop.repository.LikeRepository;
-import com.fatih.KnitShop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -37,7 +36,6 @@ public class LikeManager implements LikeService {
     private final PostService postService;
     private final CommentService commentService;
     private final MessageSource messageSource;
-    private final UserRepository userRepository;
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public LikeEntity getPostLikeById(UUID ownerId, UUID postId, UUID likeId) {
@@ -56,6 +54,19 @@ public class LikeManager implements LikeService {
                         Locale.getDefault())));
     }
 
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public LikeEntity getReplyLikeById(UUID ownerId, UUID postId, UUID commentId, UUID replyId, UUID likeId) {
+        CommentEntity foundReply = commentService.getReplyById(ownerId, postId, commentId, replyId);
+        return foundReply.getLikes().stream().filter(like -> like.getId().equals(likeId)).findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(messageSource.getMessage(
+                        "backend.exceptions.LK005",
+                        new Object[]{ownerId, postId, commentId, replyId, likeId},
+                        Locale.getDefault()
+                )));
+    }
+
+    //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public Page<UserEntity> getLikesByPostId(UUID ownerId, UUID postId, Pageable pageable) {
@@ -63,9 +74,11 @@ public class LikeManager implements LikeService {
         userService.checkUser(ownerId);
         postService.checkPost(postId);
 
-        Page<LikeEntity> foundLikes = likeRepository.findAllByPost_User_IdAndPost_Id(ownerId, postId, pageable);
-        List<UserEntity> foundUsers = foundLikes.getContent().stream().map(LikeEntity::getUser).toList();
-        return new PageImpl<>(foundUsers, pageable, foundLikes.getTotalElements());
+        PostEntity foundPost = postService.getPostById(ownerId, postId);
+        List<LikeEntity> foundLikes = foundPost.getLikes();
+        List<UserEntity> foundUsers = foundLikes.stream().map(LikeEntity::getUser).toList();
+        List<UserEntity> content = foundUsers.subList(1, foundUsers.size());
+        return new PageImpl<>(content, pageable, foundLikes.size());
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -153,7 +166,8 @@ public class LikeManager implements LikeService {
         LikeEntity newLike = LikeEntity.builder()
                 .comment(foundComment)
                 .user(foundUser)
-                .post(foundComment.getPost()).build();
+                .post(foundComment.getPost())
+                .build();
 
         foundComment.getLikes().add(newLike);
         foundComment.setLikeCount((long) foundComment.getLikes().size());
@@ -173,6 +187,48 @@ public class LikeManager implements LikeService {
         LikeEntity foundLike = getCommentLikeById(ownerId, postId, commentId, likeId);
 
         checkAuthority(foundLike.getUser().getId(), requesterId);
+
+        foundLike.getComment().setLikeCount(foundLike.getComment().getLikeCount() - 1);
+
+        foundLike.setRecordStatus(PASSIVE);
+
+        return likeRepository.save(foundLike);
+    }
+
+    @Transactional
+    @Override
+    public LikeEntity likeReply(UUID ownerId, UUID postId, UUID commentId, UUID replyId, UUID requesterId) {
+
+        UserEntity foundUser = userService.getUserById(requesterId);
+        userService.checkUser(ownerId);
+        PostEntity foundPost = postService.getPostById(ownerId, postId);
+        CommentEntity foundReply = commentService.getReplyById(ownerId, postId, commentId, replyId);
+
+        validateReplyLikes(foundReply, requesterId);
+
+        LikeEntity newLike = LikeEntity.builder()
+                .comment(foundReply)
+                .user(foundUser)
+                .post(foundPost)
+                .build();
+
+        foundReply.getLikes().add(newLike);
+        foundReply.setLikeCount((long) foundReply.getLikes().size());
+
+        return likeRepository.save(newLike);
+    }
+
+
+    @Transactional
+    @Override
+    public LikeEntity unlikeReply(UUID ownerId, UUID postId, UUID commentId, UUID replyId, UUID likeId, UUID requesterId) {
+
+        userService.checkUser(ownerId);
+        userService.checkUser(requesterId);
+        postService.checkPost(postId);
+        commentService.checkComment(commentId);
+
+        LikeEntity foundLike = getReplyLikeById(ownerId, postId, commentId, replyId, likeId);
 
         checkAuthority(foundLike.getUser().getId(), requesterId);
 
@@ -210,6 +266,20 @@ public class LikeManager implements LikeService {
     public void validateCommentLikes(CommentEntity foundComment, UUID requesterId) {
 
         boolean isAlreadyLiked = foundComment.getLikes().stream()
+                .anyMatch(like -> like.getUser().getId().equals(requesterId));
+
+        if (isAlreadyLiked) {
+            throw new DataAlreadyExistException(messageSource.getMessage(
+                    "backend.exceptions.LK002",
+                    new Object[]{requesterId},
+                    Locale.getDefault()));
+        }
+    }
+
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public void validateReplyLikes(CommentEntity foundReply, UUID requesterId) {
+
+        boolean isAlreadyLiked = foundReply.getLikes().stream()
                 .anyMatch(like -> like.getUser().getId().equals(requesterId));
 
         if (isAlreadyLiked) {

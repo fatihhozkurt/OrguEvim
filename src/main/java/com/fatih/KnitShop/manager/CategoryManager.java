@@ -23,7 +23,7 @@ public class CategoryManager implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final MessageSource messageSource;
-    private final SoftDeletePostRelationsManager softDeletePostRelationsManager;
+    private final SoftDeletePost softDeletePost;
 
     //Checked
     @Transactional
@@ -60,13 +60,13 @@ public class CategoryManager implements CategoryService {
     @Override
     public void deleteCategory(UUID categoryId) {
 
-        CategoryEntity category = getCategoryById(categoryId);
+        CategoryEntity foundCategory = getCategoryById(categoryId);
 
-        category.getPosts().forEach(softDeletePostRelationsManager::softDeletePostRelations);
+        foundCategory.getPosts().forEach(softDeletePost::softDeletePost);
 
-        category.setRecordStatus(PASSIVE);
+        foundCategory.setRecordStatus(PASSIVE);
 
-        categoryRepository.save(category);
+        categoryRepository.save(foundCategory);
     }
 
     //Checked

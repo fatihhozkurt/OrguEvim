@@ -21,4 +21,8 @@ public interface LikeService {
     LikeEntity likeComment(UUID ownerId, UUID postId, UUID commentId, UUID requesterId);
 
     LikeEntity unlikeComment(UUID ownerId, UUID postId, UUID commentId, UUID likeId, UUID requesterId);
+
+    LikeEntity likeReply(UUID ownerId, UUID postId, UUID commentId, UUID replyId, UUID requesterId);
+
+    LikeEntity unlikeReply(UUID ownerId, UUID postId, UUID commentId, UUID replyId, UUID likeId, UUID requesterId);
 }

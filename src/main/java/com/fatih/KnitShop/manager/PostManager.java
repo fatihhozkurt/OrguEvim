@@ -1,9 +1,6 @@
 package com.fatih.KnitShop.manager;
 
-import com.fatih.KnitShop.entity.CategoryEntity;
-import com.fatih.KnitShop.entity.ImageEntity;
-import com.fatih.KnitShop.entity.PostEntity;
-import com.fatih.KnitShop.entity.UserEntity;
+import com.fatih.KnitShop.entity.*;
 import com.fatih.KnitShop.exception.ResourceNotFoundException;
 import com.fatih.KnitShop.exception.UnauthorizedException;
 import com.fatih.KnitShop.manager.service.CategoryService;
@@ -31,7 +28,7 @@ public class PostManager implements PostService {
     private final MessageSource messageSource;
     private final UserService userService;
     private final CategoryService categoryService;
-    private final SoftDeletePostRelationsManager softDeletePostRelationsManager;
+    private final SoftDeletePost softDeletePost;
 
     //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -143,7 +140,7 @@ public class PostManager implements PostService {
         PostEntity foundPost = getPostById(ownerId, postId);
 
         //İlişkili varlıkları sil
-        softDeletePostRelationsManager.softDeletePostRelations(foundPost);
+        softDeletePost.softDeletePost(foundPost);
     }
 
     //Checked
@@ -186,15 +183,15 @@ public class PostManager implements PostService {
         if (requestedPost.getYoutubeLink() != null) {
             foundPost.setYoutubeLink(requestedPost.getYoutubeLink());
         }
-        //JPA orphan removel sebebiyle eski setImages() ile atamadan önceki eski listeyi silmeye çalışıyor.
         if (requestedPost.getImages() != null) {
-            List<ImageEntity> foundImages = foundPost.getImages();
-            foundImages.forEach(image -> image.setRecordStatus(PASSIVE));
+            foundPost.getImages().forEach(image -> image.setRecordStatus(PASSIVE));
+
             List<ImageEntity> newImages = requestedPost.getImages();
             newImages.forEach(image -> image.setPost(foundPost));
-            foundPost.setImages(newImages);
-            foundPost.setImageCount((long) foundImages.size());
-            foundPost.setCoverImage(foundPost.getImages().getFirst());
+            foundPost.getImages().addAll(newImages);
+
+            foundPost.setImageCount(foundPost.getImages().stream().filter(BaseEntity::isRecordStatus).count());
+            foundPost.setCoverImage(newImages.getFirst());
         }
         return postRepository.save(foundPost);
     }

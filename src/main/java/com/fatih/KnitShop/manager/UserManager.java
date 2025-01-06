@@ -28,7 +28,7 @@ public class UserManager implements UserService {
 
     private final UserRepository userRepository;
     private final MessageSource messageSource;
-    private final SoftDeletePostRelationsManager softDeletePostRelationsManager;
+    private final SoftDeletePost softDeletePost;
 
     //Checked
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -164,7 +164,7 @@ public class UserManager implements UserService {
         //Takip ettiklerinde gezip her birisini unfollow et
         followings.forEach(following -> unfollow(foundUser.getId(), following.getId(), foundUser.getId()));
 
-        foundUser.getPosts().forEach(softDeletePostRelationsManager::softDeletePostRelations);
+        foundUser.getPosts().forEach(softDeletePost::softDeletePost);
 
         //Silinecek kişi silindi
         foundUser.setRecordStatus(PASSIVE);
@@ -279,7 +279,6 @@ public class UserManager implements UserService {
             ImageEntity newAvatarImage = requestedUser.getAvatarImage();
             foundUser.setAvatarImage(newAvatarImage);
         }
-
         return userRepository.save(foundUser);
     }
 

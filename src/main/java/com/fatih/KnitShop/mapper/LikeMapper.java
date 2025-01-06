@@ -1,9 +1,6 @@
 package com.fatih.KnitShop.mapper;
 
-import com.fatih.KnitShop.dto.response.like.LikeCommentResponse;
-import com.fatih.KnitShop.dto.response.like.LikePostResponse;
-import com.fatih.KnitShop.dto.response.like.UnlikeCommentResponse;
-import com.fatih.KnitShop.dto.response.like.UnlikePostResponse;
+import com.fatih.KnitShop.dto.response.like.*;
 import com.fatih.KnitShop.entity.LikeEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -27,4 +24,11 @@ public interface LikeMapper {
 
     @Mapping(target = "currentCommentLikeCount", source = "comment.likeCount")
     UnlikeCommentResponse toUnlikeCommentResponse(LikeEntity likeEntity);
+
+    @Mapping(target = "likeId", source = "id")
+    @Mapping(target = "currentReplyLikeCount", source = "comment.likeCount")
+    LikeReplyResponse toLikeReplyResponse(LikeEntity likeEntity);
+
+    @Mapping(target = "currentReplyLikeCount", source = "comment.likeCount")
+    UnlikeReplyResponse toUnlikeReplyResponse(LikeEntity likeEntity);
 }
