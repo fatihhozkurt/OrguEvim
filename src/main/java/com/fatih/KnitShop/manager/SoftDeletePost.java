@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.fatih.KnitShop.url.RecordStatus.PASSIVE;
+import static com.fatih.KnitShop.consts.RecordStatus.PASSIVE;
 
 @Service
 @RequiredArgsConstructor

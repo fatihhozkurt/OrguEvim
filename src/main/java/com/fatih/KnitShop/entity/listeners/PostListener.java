@@ -5,7 +5,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import org.springframework.stereotype.Component;
 
-import static com.fatih.KnitShop.url.RecordStatus.ACTIVE;
+import static com.fatih.KnitShop.consts.RecordStatus.ACTIVE;
 
 @Component
 public class PostListener {

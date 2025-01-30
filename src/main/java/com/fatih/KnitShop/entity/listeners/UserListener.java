@@ -6,7 +6,7 @@ import jakarta.persistence.PreUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import static com.fatih.KnitShop.url.RecordStatus.*;
+import static com.fatih.KnitShop.consts.RecordStatus.*;
 
 @Component
 @RequiredArgsConstructor

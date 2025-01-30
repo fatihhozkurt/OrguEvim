@@ -1,6 +1,4 @@
-package com.fatih.KnitShop.url;
-
-import org.springframework.stereotype.Component;
+package com.fatih.KnitShop.consts;
 
 public final class UrlConst {
 

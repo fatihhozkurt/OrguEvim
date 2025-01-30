@@ -1,7 +1,6 @@
 package com.fatih.KnitShop.manager.service;
 
 import com.fatih.KnitShop.entity.CommentEntity;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
