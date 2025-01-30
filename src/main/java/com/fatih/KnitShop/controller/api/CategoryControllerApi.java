@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-import static com.fatih.KnitShop.url.UrlConst.*;
+import static com.fatih.KnitShop.consts.UrlConst.*;
 
 @RequestMapping(CATEGORY)
 public interface CategoryControllerApi {

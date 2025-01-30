@@ -20,7 +20,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.fatih.KnitShop.url.RecordStatus.PASSIVE;
+import static com.fatih.KnitShop.consts.RecordStatus.PASSIVE;
 
 @Service
 @RequiredArgsConstructor

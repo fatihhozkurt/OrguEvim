@@ -5,7 +5,7 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.fatih.KnitShop.url.UrlConst.CSRF;
+import static com.fatih.KnitShop.consts.UrlConst.CSRF;
 
 @RequestMapping(CSRF)
 public interface CsrfControllerApi {
