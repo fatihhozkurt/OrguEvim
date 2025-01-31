@@ -72,9 +72,6 @@ cd OrguEvim
 mvn clean install
 ```
 ### 4️⃣ Run the Application
-```sh
-mvn clean install
-```
 
 ## 🔥 Features
 ✅ **Category Management** 🏷️
@@ -158,6 +155,7 @@ I am currently working on integrating the following technologies into the projec
 - **JWT & Spring Security** for enhanced authentication 🔐
 - **Elasticsearch** for efficient search capabilities 🔍
 - **AWS S3** Image Management 📸
+
 These enhancements will improve the performance, security, and scalability of KnitShop. Stay tuned for updates! 🚀
 
 ## 🤝 Contributing
