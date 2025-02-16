@@ -151,7 +151,6 @@ POST /post
 
 I am currently working on integrating the following technologies into the project:
 - **Redis Caching** for improving data retrieval speed 🏎️
-- **Docker Containerization** for deployment flexibility 🐳
 - **JWT & Spring Security** for enhanced authentication 🔐
 - **Elasticsearch** for efficient search capabilities 🔍
 - **AWS S3** Image Management 📸
